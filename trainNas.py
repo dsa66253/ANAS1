@@ -57,7 +57,7 @@ def parse_args():
 def prepareDataSet():
     #info prepare dataset
     datasetHandler = DatasetHandler(trainDataSetFolder, cfg, seed_img)
-    datasetHandler.addAugmentDataset(transforms.RandomHorizontalFlip(p=1))
+    # datasetHandler.addAugmentDataset(transforms.RandomHorizontalFlip(p=1))
     # datasetHandler.addAugmentDataset(transforms.RandomRotation(degrees=10))
     print("training dataset set size:", len(datasetHandler.getTrainDataset()))
     print("val dataset set size:", len(datasetHandler.getValDataset()))
