@@ -105,6 +105,27 @@ class NewNasModel(nn.Module):
         return output
     def __initialize_weights(self):
         initialize_weights(self)
+    def getWeight(self):
+        print("getWeight()")
+        # for k, v in self.named_parameters():
+        #     print(k)
+        # exit()
+        # print(self.get_submodule("layerDict.layer_0_1.innerCellDict.innerCell_0.opList.0"))
+        self.weightParameters = []
+        for k, v in self.named_modules():
+        #* algo: get all submodule, check if it's instance of Conv, check switch, renew optim
+            # print("->", k)
+            if "conv" in k.split(".")[-1]:
+                # get conv module
+                if v.getSwitch()==True:
+                    print(k)
+                    for key, para in v.named_parameters():
+                        self.weightParameters.append(para)
+            elif "poolDict" in k.split(".")[-1] or "fc" in k.split(".")[-1]:
+                print(k)
+                for key, para in v.named_parameters():
+                    self.weightParameters.append(para)
+        return self.weightParameters
         
 if __name__ == '__main__':
     genotype_filename = os.path.join('./weights_pdarts_nodrop/',

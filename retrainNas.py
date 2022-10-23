@@ -108,6 +108,10 @@ def prepareModel(kth):
     initialize_weights(net, seed_img)
     return net
 def prepareOpt(net):
+    for k, v in net.named_parameters():
+        print(k)
+    net.getWeight()
+    exit()
     return optim.SGD(net.parameters(), lr=initial_lr, momentum=momentum,
                     weight_decay=weight_decay)  # 是否采取 weight_decay
 

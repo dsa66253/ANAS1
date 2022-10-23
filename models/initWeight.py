@@ -24,8 +24,8 @@ def openCurExp():
     #! here need to be related to kth 
 def initialize_weights(model, seed):
     print("set initialize weight with seed ", seed)
-    curExp = openCurExp()
-    print("cuurent experiment", curExp)
+    # curExp = openCurExp()
+    # print("cuurent experiment", curExp)
     for m in model.modules():
         if isinstance(m, nn.Conv2d):
             set_seed_cpu(seed)

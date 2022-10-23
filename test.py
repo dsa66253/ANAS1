@@ -194,7 +194,7 @@ class TestController:
             if v.requires_grad:
                 print (k, v.data.sum())
             
-    def test(self, net):
+    def test(self, net, showOutput=False):
         confusion_matrix_torch = torch.zeros(self.num_classes, self.num_classes)
         net.eval()
         with torch.no_grad():
@@ -207,16 +207,12 @@ class TestController:
                 outputs = net(images)
                 _, predict = torch.max(outputs.data, 1)
                 total += labels.size(0)
-                # total = total + 1
-                # print("predict", predict.shape, predict)
-                # print("labels", labels.shape, labels)
                 correct += (predict == labels).sum().item()
                 for t, p in zip(labels.view(-1), predict.view(-1)):
                     confusion_matrix_torch[t.long(), p.long()] += 1
-                print("outputs ", outputs)
-                # print("predict", predict)
-                print("labels", labels)
-                # print("total {}, correct {}".format(total, correct))
+                if showOutput:
+                    print("outputs ", outputs)
+
             acc = correct / total
 
         net.train()
