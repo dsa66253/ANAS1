@@ -214,7 +214,7 @@ class Model(nn.Module):
         ]
         return torch.Tensor(self.alphasParameters[0].clone().detach())
     def getWeight(self):
-        print("getWeight")
+        print("getWeight()")
         # for k, v in self.named_parameters():
         #     print(k)
         # exit()
@@ -227,6 +227,8 @@ class Model(nn.Module):
                 # get conv module
                 if v.getSwitch()==True:
                     print(k)
+                    for key, para in v.named_parameters():
+                        self.weightParameters.append(para)
             elif "poolDict" in k.split(".")[-1] or "fc" in k.split(".")[-1]:
                 print(k)
                 for key, para in v.named_parameters():
