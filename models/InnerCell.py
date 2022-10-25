@@ -10,7 +10,7 @@ class InnerCell(nn.Module):
         self.transArchPerInnerCell= []
         self.cellArchPerIneerCell = cellArchPerIneerCell
         self.innercellName = innercellName
-        self.beta =  nn.Parameter(torch.FloatTensor([1]))
+        self.beta =  nn.Parameter(torch.FloatTensor([0.5]))
         self.innerCellSwitch = True
         #info trainslate index to key of operations
         for index in range(len(opIndex)):
