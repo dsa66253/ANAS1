@@ -13,8 +13,9 @@ from .InnerCell import InnerCell
 
 
 class Model(nn.Module):
-    def __init__(self):
+    def __init__(self, arch=None, NasMode=True):
         super(Model, self).__init__()
+        self.NasMode = NasMode
         #info private attribute
         self.numOfOpPerCell = cfg["numOfOperations"]
         self.numOfLayer = cfg["numOfLayers"]
@@ -22,14 +23,18 @@ class Model(nn.Module):
         self.currentEpoch = 0
         self.alphasDict = {}
         self.betaDict = {}
+        self.arch = arch
         #info define network structure
         self.layerDict = nn.ModuleDict({})
-        for i in range(len(featureMapDim)-1):
-            for j in range(i+1, len(featureMapDim)):
-                if i==0:
-                    self.layerDict["layer_{}_{}".format(i, j)] = Layer(self.numOfInnerCell, 0, featureMapDim[i], featureMapDim[j], 4, cellArchPerLayer=trainMatrix[0], layerName="layer_{}_{}".format(i, j))
-                else:
-                    self.layerDict["layer_{}_{}".format(i, j)] = Layer(self.numOfInnerCell, 0, featureMapDim[i], featureMapDim[j], 1, cellArchPerLayer=trainMatrix[0], layerName="layer_{}_{}".format(i, j))
+        for key in arch:
+            [_, i, j] = key.split("_")
+            if i=="0":
+                if sum(arch[key])>0:
+                    self.layerDict["layer_{}_{}".format(i, j)] = Layer(self.numOfInnerCell, 0, featureMap["f"+i]["channel"], featureMap["f"+j]["channel"], 4, cellArchPerLayer=arch[key], layerName=key, InnerCellArch=arch[key], NasMode=NasMode)
+            
+            else:
+                if sum(arch[key])>0:
+                    self.layerDict["layer_{}_{}".format(i, j)] = Layer(self.numOfInnerCell, 0, featureMap["f"+i]["channel"], featureMap["f"+j]["channel"], 1, cellArchPerLayer=arch[key], layerName=key, InnerCellArch=arch[key], NasMode=NasMode)
                 # print("layer_{}_{}".format(i, j), type(layerDic["layer_{}_{}".format(i, j)]))
         
         self.poolDict = nn.ModuleDict({})
@@ -141,12 +146,23 @@ class Model(nn.Module):
             else:
                 break
         return output
-
+    def forward2(self, input):
+        output=None
+        for layerName in self.layerDict:
+            if output==None:
+                output = self.layerDict[layerName](input)
+            else:
+                output = self.layerDict[layerName](output)
+            output = self.maxPool(layerName[-1], output)
+        #info to fc layer
+        output = torch.flatten(output, start_dim=1)
+        output = self.fc(output)
+        return output
     def forward(self, input):
         #* every time use alphas need to set alphas to 0 which has been drop
         # self.normalizeAlphas()
         #* create outputList
-        
+        # return self.forward2(input)
         outputList = [[0] * len(featureMapDim) for i in range(len(featureMapDim))]
         featureMapList = [0]*len(featureMapDim)
         featureMapList[0] = input

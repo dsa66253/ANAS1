@@ -4,17 +4,18 @@ import torch.optim as optim
 from .initWeight import initialize_weights
 OPS = {
     #'conv_1x1': lambda C_in, C_out, stride, affine, use_ABN: Conv(C_in, C_out, kernelSize, stride, padding, affine=affine),
-    'conv_3x3': lambda C_in, C_out, stride, affine, use_ABN: Conv(C_in, C_out, 3, stride, 1, affine=affine),
-    'conv_5x5': lambda C_in, C_out, stride, affine, use_ABN: Conv(C_in, C_out, 5, stride, 2, affine=affine),
-    'conv_7x7': lambda C_in, C_out, stride, affine, use_ABN: Conv(C_in, C_out, 7, stride, 3, affine=affine),
-    'conv_9x9': lambda C_in, C_out, stride, affine, use_ABN: Conv(C_in, C_out, 9, stride, 4, affine=affine),
-    'conv_11x11': lambda C_in, C_out, stride, affine, use_ABN: Conv(C_in, C_out, 11, stride, 5, affine=affine),
+    'conv_3x3': lambda C_in, C_out, stride, affine, use_ABN, NasMode: Conv(C_in, C_out, 3, stride, 1, affine=affine, NasMode=NasMode),
+    'conv_5x5': lambda C_in, C_out, stride, affine, use_ABN, NasMode: Conv(C_in, C_out, 5, stride, 2, affine=affine, NasMode=NasMode),
+    'conv_7x7': lambda C_in, C_out, stride, affine, use_ABN, NasMode: Conv(C_in, C_out, 7, stride, 3, affine=affine, NasMode=NasMode),
+    'conv_9x9': lambda C_in, C_out, stride, affine, use_ABN, NasMode: Conv(C_in, C_out, 9, stride, 4, affine=affine, NasMode=NasMode),
+    'conv_11x11': lambda C_in, C_out, stride, affine, use_ABN, NasMode: Conv(C_in, C_out, 11, stride, 5, affine=affine, NasMode=NasMode),
 }
 
 
 class Conv(nn.Module):
-    def __init__(self, C_in, C_out, kernel_size, stride, padding, affine):
+    def __init__(self, C_in, C_out, kernel_size, stride, padding, affine, NasMode=True):
         super(Conv, self).__init__()
+        self.NasMode = NasMode
         self.op = nn.Sequential(
             nn.Conv2d(C_in, C_out, kernel_size, stride, padding),
             nn.BatchNorm2d(C_out, affine=affine),
@@ -45,7 +46,10 @@ class Conv(nn.Module):
     def getSwitch(self):
         return self.switch
     def __initialize_alphas(self):
-        self.alpha = nn.Parameter(torch.FloatTensor([0.2]))
+        if self.NasMode:
+            self.alpha = nn.Parameter(torch.FloatTensor([0.2]))
+        else:
+            self.alpha = nn.Parameter(torch.FloatTensor([1.0]))
         self.register_parameter( "alpha", self.alpha )
         
     def forward(self, x):

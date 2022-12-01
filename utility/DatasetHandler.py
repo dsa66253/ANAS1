@@ -1,4 +1,3 @@
-from __future__ import print_function
 from torchvision import transforms
 import torch
 import torch.optim as optim
@@ -9,19 +8,8 @@ from torchvision import datasets
 from data.config import cfg_newnasmodel as cfg
 from tensorboardX import SummaryWriter
 import numpy as np
-from data.config import folder
-from feature.normalize import normalize
-from feature.make_dir import makeDir
-# from feature.split_data import split_data
 from feature.random_seed import set_seed_cpu
-from PIL import ImageFile
-from tqdm import tqdm
-from models.retrainModel import NewNasModel
-# from alexnet import Baseline
-from feature.utility import plot_acc_curve, setStdoutToFile, setStdoutToDefault
-from feature.utility import getCurrentTime, accelerateByGpuAlgo, get_device, plot_loss_curve
 import matplotlib.pyplot as plt
-from torch.utils.data import Dataset
 
 class DatasetHandler():
     def __init__(self, trainDataSetFolder, cfg, seed=10):
@@ -62,7 +50,9 @@ class DatasetHandler():
         # self.augmentDatasetList.append(newAugmentData)
         # print("self.trainDataset", type(self.trainDataset))
         # print("newAugmentTrainDataset", type(newAugmentTrainDataset))
+        # print("before concate", len(self.originalTrainDataset))
         self.originalTrainDataset = torch.utils.data.ConcatDataset([self.originalTrainDataset, newAugmentTrainDataset])
+        # print("after concate", len(self.originalTrainDataset))
         # exit()
     def getTrainDataset(self):
         if self.originalTrainDataset==None:
@@ -72,7 +62,8 @@ class DatasetHandler():
                 ]))
             self.originalTrainDataset, self.originalValDataset = self.__split_data(self.originalData, 0.2)
             self.augmentDatasetList.append(self.originalTrainDataset)
-        print("trainDataSetFolder", self.trainDataSetFolder)
+        # print("trainDataSetFolder", self.trainDataSetFolder)
+        # print("tatal number of train images: ", len(self.augmentDatasetList))
         return self.originalTrainDataset
     
     def getValDataset(self):
@@ -83,13 +74,15 @@ class DatasetHandler():
                 ]))
             self.originalTrainDataset, self.originalValDataset = self.__split_data(self.originalData, 0.2)
             self.augmentDatasetList.append(self.originalTrainDataset)
-        print("trainDataSetFolder", self.trainDataSetFolder)
+        # print("trainDataSetFolder", self.trainDataSetFolder)
+        # print("tatal number of val images: ", len(self.originalValDataset))
         return self.originalValDataset
     def getTestDataset(self):
         self.testDataset = datasets.ImageFolder(self.trainDataSetFolder, transform=transforms.Compose([
                     self.normalize,
                     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
                 ]))
+        # print("tatal number of test images: ", len(self.testDataset))
         return self.testDataset
     @staticmethod
     def getOriginalDataset(trainDataSetFolder, cfg, seed=10):
@@ -99,6 +92,8 @@ class DatasetHandler():
         return len(self.trainDataset)
     def __getitem__(self, index):
         return self.trainDataset[index]
+    def getClassToIndex(self):
+        return self.originalData.class_to_idx
 
 def printImage(train_data, index):
 

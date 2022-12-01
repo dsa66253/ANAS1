@@ -2,7 +2,20 @@ import matplotlib.pyplot as plt
 from matplotlib.pyplot import figure
 import numpy as np
 import os
-
+from data.config import cfg_newnasmodel as cfg
+def createMAvg(input):
+    howMany = 5
+    ma = np.copy(input)
+    for i in range(0, len(input)):
+        window = []
+        for j in range(-2, -2+howMany):
+            if i+j>=0 and i+j<len(input):
+                # print(i+j)
+                window.append(input[i+j])
+        # print(input)
+        ma[i] = np.mean(window)
+        # print(i, window, ma[i])
+    return ma
 def plot_loss_curve(lossRecord, title='default', saveFolder="./"):
     ''' Plot learning curve of your DNN (train & dev loss) '''
     figure(figsize=(6, 4))
@@ -49,24 +62,36 @@ def plot_acc_curves(accRecord, ax, title='default', saveFolder="./"):
     ax.set_title(format(title))
     ax.legend()
 def plot_combined_acc(folder = "./accLoss", title='combine', saveFolder="./plot", trainType="Nas"):
-    
+    numOfAx = 3
+    indexOfAx = 0
+    numOfFig = cfg["numOfKth"] // numOfAx
+    indexOfFig = 0
     fig, axs = plt.subplots(3, 1, figsize=(10, 8), sharex=True, constrained_layout=True)
-    for kth in range(3):
-        trainNasTrainAccFile = os.path.join(folder, "{}_train_acc_{}.npy".format(trainType, str(kth)) )
-        trainNasnValAccFile = os.path.join( folder,"{}_val_acc_{}.npy".format(trainType, str(kth)) )
-        testAccFile = os.path.join( folder,"{}_test_acc_{}.npy".format(trainType, str(kth)) )
-        # testAccFile = os.path.join(folder, "trainNasTestAcc_{}.npy".format(trainType, str(kth)) )
-        
-        
-        accRecord = {
-            "train": np.load(trainNasTrainAccFile),
-            "val": np.load(trainNasnValAccFile),
-            "test": np.load(testAccFile)
-            }
-        plot_acc_curves(accRecord, axs[kth], "acc_"+str(kth), "./plot")
-    fileName = trainType+"_"+title
-    print("save png to ", os.path.join(saveFolder, fileName))
-    plt.savefig(os.path.join(saveFolder, fileName))
+    for i in range(numOfFig):
+        fig, axs = plt.subplots(numOfAx, 1, figsize=(10, 8), sharex=True, constrained_layout=True)
+        for kth in range(numOfAx):
+            trainNasTrainAccFile = os.path.join(folder, "{}_train_acc_{}.npy".format(trainType, str(indexOfAx)) )
+            trainNasnValAccFile = os.path.join( folder,"{}_val_acc_{}.npy".format(trainType, str(indexOfAx)) )
+            testAccFile = os.path.join( folder,"{}_test_acc_{}.npy".format(trainType, str(indexOfAx)) )
+            # testAccFile = os.path.join(folder, "trainNasTestAcc_{}.npy".format(trainType, str(kth)) )
+            try:
+                accRecord = {
+                    "train": np.load(trainNasTrainAccFile),
+                    "val": np.load(trainNasnValAccFile),
+                    "test": np.load(testAccFile)
+                }
+            except:
+                accRecord = {
+                    "train": np.load(trainNasTrainAccFile),
+                    "val": np.load(trainNasnValAccFile),
+                    # "test": np.load(testAccFile)
+                }
+            plot_acc_curves(accRecord, axs[kth], "acc_"+str(indexOfAx), "./plot")
+            indexOfAx = indexOfAx + 1
+        indexOfFig = indexOfFig + 1
+        fileName = trainType+"_"+  str(indexOfFig)
+        print("save png to ", os.path.join(saveFolder, fileName))
+        plt.savefig(os.path.join(saveFolder, fileName))
 
 
 if __name__=="__main__":

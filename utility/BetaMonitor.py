@@ -9,7 +9,7 @@ class BetaMonitor():
         # self.allAlphasGrad = 0
         self.betaLogDict = None
         self.betaGradLogDict = None
-    def logBetaDictPerIter(self, net, iteration):
+    def logBetaDictPerIter(self, net, iteration=0):
         betaDict = net.getBetaDict()
         if self.betaLogDict==None:
             self.betaLogDict = {}

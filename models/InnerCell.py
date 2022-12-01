@@ -5,12 +5,17 @@ from .myoperation import OPS
 class InnerCell(nn.Module):
     #todo make it general def __init__(self, inputChannel, outputChannel, stride, cellArchPerIneerCell, alphas)
     #todo due to adding opIndex parameter, mymodel.py needs to be adjust
-    def __init__(self, inputChannel, outputChannel, stride, cellArchPerIneerCell, innercellName, opIndex=[]):
+    def __init__(self, inputChannel, outputChannel, stride, cellArchPerIneerCell, innercellName, opIndex=[], NasMode=True):
         super(InnerCell, self).__init__()
+        self.NasMode = NasMode
+        if self.NasMode:
+            self.beta =  nn.Parameter(torch.FloatTensor([1]))
+        else:
+            self.beta =  nn.Parameter(torch.FloatTensor([1]))
         self.transArchPerInnerCell= []
         self.cellArchPerIneerCell = cellArchPerIneerCell
         self.innercellName = innercellName
-        self.beta =  nn.Parameter(torch.FloatTensor([0.5]))
+        
         self.innerCellSwitch = True
         #info trainslate index to key of operations
         for index in range(len(opIndex)):
@@ -21,7 +26,7 @@ class InnerCell(nn.Module):
         # self.remainOpDict = nn.ModuleDict()
         self.alphasList = []
         for opName in self.transArchPerInnerCell:
-            op = OPS[opName](inputChannel, outputChannel, stride, False, False)
+            op = OPS[opName](inputChannel, outputChannel, stride, False, False, NasMode=NasMode)
             self.opDict[opName] = op
             # self.remainOpDict[opName] = op
             self.alphasList.append(op.getAlpha())

@@ -11,7 +11,7 @@ from .Layer import Layer
 from .InnerCell import InnerCell
 
 class NewNasModel(nn.Module):
-    def __init__(self, cellArch):
+    def __init__(self, cellArch, NasMode=False):
         super(NewNasModel, self).__init__()
         #info private attribute
         self.numOfClasses = cfg["numOfClasses"]
@@ -20,6 +20,7 @@ class NewNasModel(nn.Module):
         self.numOfInnerCell = cfg["numOfInnerCell"]
         self.cellArch = cellArch
         self.alphasDict = {}
+        self.betaDict = {}
         # self.cellArchTrans = self.translateCellArch()
         # print("self.cellArch", self.cellArch)
         #info define network structure
@@ -28,10 +29,10 @@ class NewNasModel(nn.Module):
             [_, i, j] = key.split("_")
             if i=="0":
                 if sum(cellArch[key])>0:
-                    self.layerDict["layer_{}_{}".format(i, j)] = Layer(self.numOfInnerCell, 0, featureMap["f"+i]["channel"], featureMap["f"+j]["channel"], 4, cellArchPerLayer=cellArch[key], layerName=key, InnerCellArch=cellArch[key])
+                    self.layerDict["layer_{}_{}".format(i, j)] = Layer(self.numOfInnerCell, 0, featureMap["f"+i]["channel"], featureMap["f"+j]["channel"], 4, cellArchPerLayer=cellArch[key], layerName=key, InnerCellArch=cellArch[key], NasMode=NasMode)
             else:
                 if sum(cellArch[key])>0:
-                    self.layerDict["layer_{}_{}".format(i, j)] = Layer(self.numOfInnerCell, 0, featureMap["f"+i]["channel"], featureMap["f"+j]["channel"], 1, cellArchPerLayer=cellArch[key], layerName=key, InnerCellArch=cellArch[key])
+                    self.layerDict["layer_{}_{}".format(i, j)] = Layer(self.numOfInnerCell, 0, featureMap["f"+i]["channel"], featureMap["f"+j]["channel"], 1, cellArchPerLayer=cellArch[key], layerName=key, InnerCellArch=cellArch[key], NasMode=NasMode)
         
         self.poolDict = nn.ModuleDict({})
         for i in range(3):
@@ -47,6 +48,13 @@ class NewNasModel(nn.Module):
             nn.Linear(2048, cfg["numOfClasses"])
         )
         
+        #info create betaDict
+        for k in self.layerDict.keys():
+            if "layer" in k:
+                self.betaDict[k] = self.layerDict[k].getBeta()
+    def getBetaDict(self):
+        return self.betaDict
+    
     def forward(self, input):
         output=None
         for layerName in self.layerDict:

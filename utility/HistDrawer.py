@@ -52,7 +52,7 @@ class HistDrawer():
         # # print(bin[0], len(bin[0]))
         # # print(bin[1], len(bin[1]))
         # # print(bin[2], len(bin[2]))
-        print("save to ", os.path.join(self.saveFolder, fileName)+".png")
+        # print("save to ", os.path.join(self.saveFolder, fileName)+".png")
         
         plt.savefig(os.path.join(self.saveFolder, fileName)+".png")
         plt.close()

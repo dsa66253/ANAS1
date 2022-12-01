@@ -1,5 +1,5 @@
 import os
-import sys
+import json
 import torch
 import argparse
 import torch.optim as optim
@@ -9,7 +9,7 @@ import math
 import time
 from torchvision import datasets
 import torchvision.transforms as T
-from data.config import cfg_nasmodel, cfg_alexnet, trainDataSetFolder
+from data.config import cfg_nasmodel as cfg, cfg_alexnet, trainDataSetFolder, seed
 from alexnet.alexnet import Baseline
 # from tensorboardX import SummaryWriter #* how about use tensorbaord instead of tensorboardX
 from torch.utils.tensorboard import SummaryWriter
@@ -28,19 +28,20 @@ from feature.utility import plot_acc_curve, plot_loss_curve, get_device
 from utility.alphasMonitor import AlphasMonitor
 # from utility.TransformImgTester import TransformImgTester
 from utility.DatasetHandler import DatasetHandler
-from torchvision import transforms
+from utility.HistDrawer import HistDrawer
 from  utility.DatasetReviewer import DatasetReviewer
 from utility.AccLossMonitor import AccLossMonitor
 from utility.BetaMonitor import BetaMonitor
 from models.initWeight import initialize_weights
+from utility.ValController import ValController
 stdoutTofile = True
 accelerateButUndetermine = False
 recover = False
 
-def parse_args():
+def parse_args(k=0):
     parser = argparse.ArgumentParser(description='imagenet nas Training')
     parser.add_argument('--network', default='nasmodel', help='Backbone network alexnet or nasmodel')
-    parser.add_argument('--num_workers', default=0, type=int, help='Number of workers used in dataloading')
+    parser.add_argument('--num_workers', default=4, type=int, help='Number of workers used in dataloading')
     parser.add_argument('--lr', '--learning-rate', default=1e-3, type=float, help='initial learning rate')
     parser.add_argument('--nas_lr', '--nas-learning-rate', default=3e-3, type=float,
                         help='initial learning rate for nas optimizer')
@@ -56,12 +57,13 @@ def parse_args():
 
 def prepareDataSet():
     #info prepare dataset
-    datasetHandler = DatasetHandler(trainDataSetFolder, cfg, seed_img)
+    datasetHandler = DatasetHandler(trainDataSetFolder, cfg, seed_weight)
     # datasetHandler.addAugmentDataset(transforms.RandomHorizontalFlip(p=1))
     # datasetHandler.addAugmentDataset(transforms.RandomRotation(degrees=10))
+    print("dataset:", trainDataSetFolder)
     print("training dataset set size:", len(datasetHandler.getTrainDataset()))
     print("val dataset set size:", len(datasetHandler.getValDataset()))
-    
+    print("class_to_idx", datasetHandler.getClassToIndex())
     return datasetHandler.getTrainDataset(), datasetHandler.getValDataset()
 
 def prepareDataLoader(trainData, valData):
@@ -76,7 +78,11 @@ def prepareLossFunction():
     print('Preparing loss function...')
     return  nn.CrossEntropyLoss()
 
-def prepareModel():
+def prepareModel(kth):
+    #info load full layer json
+    filePath = "./data/fullLayer.json"
+    f = open(filePath)
+    archDict = json.load(f)
     #info prepare model
     print("Preparing model...")
     if cfg['name'] == 'alexnet':
@@ -87,12 +93,12 @@ def prepareModel():
     elif cfg['name'] == 'NasModel':
         # nas model
         # todo why pass no parameter list to model, and we got cfg directly in model.py from config.py
-        net = Model()
+        net = Model(arch=archDict)
         print("net", net)
         #! move to cuda before assign net's parameters to optim, otherwise, net on cpu will slow down training speed
         net = net.to(device)
         net.train()
-    initialize_weights(net, seed_img)
+    initialize_weights(net, seed_weight)
     return net
 
 def prepareOpt(net):
@@ -151,7 +157,7 @@ def saveAccLoss(kth, lossRecord, accRecord):
         print(e)
 def makeAllDir():
     for folderName in folder:
-        print("making folder ", folder[folderName])
+        # print("making folder ", folder[folderName])
         makeDir(folder[folderName])
 
 def weightCount(net):
@@ -179,13 +185,13 @@ def gradCount(net):
 def myTrain(kth, trainData, train_loader, val_loader, net, model_optimizer, nas_optimizer, criterion, writer, beta_optimizer):
     
     # calculate how many iterations
-    epoch_size = math.ceil(len(trainData) / batch_size)#* It should be number of batch per epoch
-    max_iter = cfg['epoch'] * epoch_size #* it's correct here. It's the totoal iterations.
-    #* an iteration go through a mini-batch(aka batch)
-    stepvalues = (cfg['decay1'] * epoch_size, cfg['decay2'] * epoch_size)
-    step_index = 0
-    start_iter = 0
-    epoch = 0
+    # epoch_size = math.ceil(len(trainData) / batch_size)#* It should be number of batch per epoch
+    # max_iter = cfg['epoch'] * epoch_size #* it's correct here. It's the totoal iterations.
+    # #* an iteration go through a mini-batch(aka batch)
+    # stepvalues = (cfg['decay1'] * epoch_size, cfg['decay2'] * epoch_size)
+    # step_index = 0
+    # start_iter = 0
+    # epoch = 0
     
     # other setting
     print("start to train...")
@@ -197,8 +203,94 @@ def myTrain(kth, trainData, train_loader, val_loader, net, model_optimizer, nas_
     record_test_acc = np.array([])
     alphaMonitor = AlphasMonitor()
     betaMonitor = BetaMonitor()
+    for epoch in tqdm(range(cfg["epoch"]), unit =" iter on {}".format(kth)):
+        print("start epoch", epoch)
+        train_acc = 0.0
+        train_loss = 0.0
+        val_acc = 0.0
+        val_loss = 0.0
+        net.train() # set the model to training mode
+        if epoch >= cfg['start_train_nas_epoch'] and (epoch - cfg['start_train_nas_epoch'])%2 == 0:
+            #info train alpha and beta
+            for i, data in enumerate(trainDataLoader):
+                inputs, labels = data
+                inputs, labels = inputs.to(device), labels.to(device)
+                nas_optimizer.zero_grad(set_to_none=True)
+                beta_optimizer.zero_grad(set_to_none=True)
+                outputs = net(inputs) 
+
+                batch_loss = criterion(outputs, labels)
+                _, train_pred = torch.max(outputs, 1) # get the index of the class with the highest probability
+                batch_loss.backward() 
+                nas_optimizer.step() 
+                beta_optimizer.step() 
+
+                train_acc += (train_pred.cpu() == labels.cpu()).sum().item()
+                train_loss += batch_loss.item()
+        else:
+            # info train weight
+            for i, data in enumerate(trainDataLoader):
+                inputs, labels = data
+                inputs, labels = inputs.to(device), labels.to(device)
+                model_optimizer.zero_grad() 
+                outputs = net(inputs) 
+
+                batch_loss = criterion(outputs, labels)
+                _, train_pred = torch.max(outputs, 1) # get the index of the class with the highest probability
+                batch_loss.backward() 
+                model_optimizer.step() 
+
+                train_acc += (train_pred.cpu() == labels.cpu()).sum().item()
+                train_loss += batch_loss.item()
+        #info log alpha and beta
+        alphaMonitor.logAlphaDictPerIter(net)
+        betaMonitor.logBetaDictPerIter(net)
+            
+        #info handle alpha operation 
+        if epoch in epoch_to_drop:
+            # pass
+            # net.dropMinAlpha()
+            # net.dropMinBeta()
+            model_optimizer, nas_optimizer, beta_optimizer = prepareOpt(net)
+        if epoch >= cfg['start_train_nas_epoch']:
+            # if net.dropBeta():
+            #     model_optimizer, nas_optimizer, beta_optimizer = prepareOpt(net)
+            # net.filtAlphas()
+            # net.normalizeAlphas()
+            # net.normalizeByDivideSum()
+            # net.saveMask(epoch, kth)
+            pass
     
-    print("minibatch size: ", epoch_size)
+        record_train_acc = np.append(record_train_acc, train_acc/len(trainData)*100)
+        record_train_loss = np.append(record_train_loss, train_loss/len(trainDataLoader))
+        #info validate model
+        valAcc = valC.val(net)
+        record_val_acc = np.append(record_val_acc, valAcc)
+        record_val_loss = np.append(record_val_loss, torch.Tensor([0]))
+        # print("epoch", epoch)
+        # print("record_val_acc", record_val_acc)
+        # print("record_train_acc", record_train_acc)
+        #info test model
+        testAcc = testC.test(net)
+        record_test_acc = np.append(record_test_acc, testAcc)
+    
+    #info save alpha and beta
+    alphaMonitor.saveAllAlphas(kth)
+    # alphaMonitor.saveAllAlphasGrad(kth) #! a bug didn't be solved
+    betaMonitor.saveAllBeta(kth)
+    # betaMonitor.saveAllBetaGrad(kth)
+    
+    last_epoch_val_acc = valC.val(net)
+    lossRecord = {"train": record_train_loss, "val": record_val_loss}
+    accRecord = {"train": record_train_acc, "val": record_val_acc, "test": record_test_acc}
+    print("start test model before save model")
+    testAcc = testC.test(net)
+    # print(record_val_acc)
+    # print(record_train_acc)
+    # testC.printAllModule(net)
+    torch.save(net.state_dict(), os.path.join(folder["retrainSavedModel"], cfg['name'] + str(kth) + '_Final.pt'))
+    
+    return last_epoch_val_acc, lossRecord, accRecord
     #info start training loop
     for iteration in tqdm(range(start_iter, max_iter), unit =" iterations on {}".format(kth)):
         
@@ -413,38 +505,21 @@ if __name__ == '__main__':
     torch.set_default_dtype(torch.float32) #* torch.float will slow the training speed
     valList = []
     
-    for k in range(3):
+    for k in range(0, cfg["numOfKth"]):
         #info set stdout to file
         if stdoutTofile:
             f = setStdoutToFile( os.path.join( folder["log"], "train_nas_5cell_{}th.txt".format(str(k)) ) )
-        #info diifferent seeds fro different initail weights
-        if k == 0:
-            seed_img = 10
-            seed_weight = 20
-        elif k == 1:
-            seed_img = 255
-            seed_weight = 278
-        else:
-            seed_img = 830
-            seed_weight = 953
-        
-        accelerateByGpuAlgo(accelerateButUndetermine)
+        print("working directory ", os.getcwd())
+
+        #info set seed
+        seed_weight = seed[str(k)]
+        accelerateByGpuAlgo(cfg["cuddbenchMark"])
         set_seed_cpu(seed_weight)  # 控制照片批次順序
-        
-        ImageFile.LOAD_TRUNCATED_IMAGES = True
-        os.environ["CUDA_VISIBLE_DEVICES"] = '1'
-        args = parse_args()
+        print("seed_weight{} start at ".format(seed_weight), getCurrentTime())
+        print("cfg", cfg)
+        args = parse_args(str(k))
         
         makeAllDir()
-        
-        cfg = None
-        if args.network == "alexnet":
-            cfg = cfg_alexnet
-        elif args.network == "nasmodel":
-            cfg = cfg_nasmodel
-        else:
-            print('Model %s doesn\'t exist!' % (args.network))
-            sys.exit(0)
 
         img_dim = cfg['image_size']
         num_gpu = cfg['ngpu']
@@ -457,19 +532,22 @@ if __name__ == '__main__':
         initial_lr = args.lr
         nas_initial_lr = args.nas_lr
         gamma = args.gamma
-
-        #info test
-        test = TestController(cfg, device)
-        writer = SummaryWriter(log_dir=folder["tensorboard_trainNas"], comment="{}th".format(str(k)))
-        
-        # transformImgTest = TransformImgTester(batch_size, kth=k)
-
-        print("seed_img {}, seed_weight {} start at ".format(seed_img, seed_weight), getCurrentTime())
-        print("training cfg", cfg)
+        #info training process 
         trainData, valData = prepareDataSet()
         trainDataLoader, valDataLoader = prepareDataLoader(trainData, valData)
+        
         criterion = prepareLossFunction()
-        net = prepareModel()
+        net = prepareModel(k)
+        histDrawer = HistDrawer(folder["pltSavedDir"])
+        # histDrawer.drawNetConvWeight(net, tag="ori_{}".format(str(k)))
+        #info test
+        testC = TestController(cfg, device)
+        writer = SummaryWriter(log_dir=folder["tensorboard_trainNas"], comment="{}th".format(str(k)))
+        #info validation controller
+        valC = ValController(cfg, device, valDataLoader, criterion)
+        # transformImgTest = TransformImgTester(batch_size, kth=k)
+
+
 
         model_optimizer, nas_optimizer, beta_optimizer = prepareOpt(net)
         last_epoch_val_ac, lossRecord, accRecord  = myTrain(k, trainData, trainDataLoader, valDataLoader, net, model_optimizer, nas_optimizer, criterion, writer, beta_optimizer)  # 進入model訓練
@@ -483,7 +561,7 @@ if __name__ == '__main__':
         
         datasetReviewer = DatasetReviewer(cfg["batch_size"],
                                         k,
-                                        DatasetHandler.getOriginalDataset(trainDataSetFolder, cfg, seed_img), 
+                                        DatasetHandler.getOriginalDataset(trainDataSetFolder, cfg, seed_weight), 
                                         device)
         datasetReviewer.makeSummary(trainDataLoader, writer, net)
         datasetReviewer.showReport()

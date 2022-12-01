@@ -8,7 +8,7 @@ class AlphasMonitor():
         self.allAlphas = 0
         self.allAlphasGrad = 0
         self.alphaLogDict = None
-    def logAlphaDictPerIter(self, net, iteration):
+    def logAlphaDictPerIter(self, net, iteration=0):
         alphaDict = net.getAlphaDict()
         if self.alphaLogDict==None:
             self.alphaLogDict = {}

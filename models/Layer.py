@@ -3,9 +3,9 @@ import torch
 from  .InnerCell import InnerCell
 
 class Layer(nn.Module):
-    def __init__(self, numOfInnerCell, layer, inputChannel=3, outputChannel=96, stride=1, padding=1, cellArchPerLayer=None, layerName="", InnerCellArch=[1, 1, 1, 1, 1]):
-
+    def __init__(self, numOfInnerCell, layer, inputChannel=3, outputChannel=96, stride=1, padding=1, cellArchPerLayer=None, layerName="", InnerCellArch=[1, 1, 1, 1, 1], NasMode=True):
         super(Layer, self).__init__()
+        self.NasMode= NasMode
         #info set private attribute
         self.numOfInnerCell = numOfInnerCell
         self.layer = layer
@@ -21,7 +21,7 @@ class Layer(nn.Module):
         #info define layer structure
         # print("cellArchPerLayer", cellArchPerLayer)
         self.innerCellDict = nn.ModuleDict({
-            'innerCell_0': InnerCell(inputChannel, outputChannel//self.numOfInnerCell, stride, cellArchPerLayer[0], innercellName=self.layerName+".innerCell_0", opIndex=InnerCellArch),
+            'innerCell_0': InnerCell(inputChannel, outputChannel//self.numOfInnerCell, stride, cellArchPerLayer[0], innercellName=self.layerName+".innerCell_0", opIndex=InnerCellArch, NasMode=NasMode),
             # 'innerCell_'+str(layer)+'_1': cell(inputChannel, outputChannel//self.numOfInnerCell, stride),
         })
         #info create alphaList 
