@@ -1,7 +1,7 @@
 #!/bin/sh
 # REM timeout 600
 # python3 handleNextExperiment.py
-# python3 refresh.py
+python3 refresh.py
 python3 trainNas.py
 python3 mydecode_pdarts.py
 python3 drawAlpha.py
