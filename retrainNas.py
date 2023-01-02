@@ -1,33 +1,21 @@
-from __future__ import print_function
-import math
 import os
-import sys
 import torch
 import torch.optim as optim
 from test import TestController
 # import torch.backends.cudnn as cudnn
 import argparse
 from torch import nn
-from torchvision import transforms, datasets
 from data.config import cfg_newnasmodel, trainDataSetFolder, seed
-from tensorboardX import SummaryWriter
 import numpy as np
 from data.config import folder
 from feature.make_dir import makeDir
 from feature.random_seed import set_seed_cpu
-from PIL import ImageFile
 from tqdm import tqdm
 from models.retrainModel import NewNasModel
-
-from alexnet.alexnet import Baseline
-from utility.alphasMonitor import AlphasMonitor
+from utility.AccLossMonitor import AccLossMonitor
 from feature.utility import setStdoutToFile, setStdoutToDefault
 from feature.utility import getCurrentTime, accelerateByGpuAlgo, get_device
-import matplotlib.pyplot as plt
 from utility.DatasetHandler import DatasetHandler
-from torchvision import transforms
-from  utility.DatasetReviewer import DatasetReviewer
-from utility.AccLossMonitor import AccLossMonitor
 import json 
 from utility.HistDrawer import HistDrawer
 from models.initWeight import initialize_weights
@@ -41,18 +29,11 @@ def printNetGrad(net):
         break
 def parse_args(k=0):
     parser = argparse.ArgumentParser(description='imagenet nas Training')
-    parser.add_argument('--network', default='newnasmodel', help='Backbone network mobile0.25 or resnet50')
     parser.add_argument('--num_workers', default=4, type=int, help='Number of workers used in dataloading')
     parser.add_argument('--lr', '--learning-rate', default=1e-3, type=float, help='initial learning rate')
     parser.add_argument('--momentum', default=0.9, type=float, help='momentum')
-    parser.add_argument('--resume_net', default=None, help='resume net for retraining')
-    parser.add_argument('--resume_epoch', default=0, type=int, help='resume iter for retraining')
     parser.add_argument('--weight_decay', default=5e-4, type=float, help='Weight decay for SGD')
     parser.add_argument('--gamma', default=0.1, type=float, help='Gamma update for SGD')
-    parser.add_argument('--genotype_file', type=str, default='genotype_' + str(k) + '.npy',
-                        help='put decode file')
-    parser.add_argument('--pltSavedDir', type=str, default='./plot',
-                        help='plot train loss and val loss')
     args = parser.parse_args()
     return args
 
@@ -100,17 +81,16 @@ def prepareModel(kth):
     #info prepare model
     print("Preparing model...")
     set_seed_cpu(seed_weight)
-    net = NewNasModel(cellArch=archDict, NasMode=False)
+    net = NewNasModel(cellArch=archDict)
     net.train()
     net = net.to(device)
     print("net.cellArch:", net.cellArch)
     print("net", net)
     initialize_weights(net, seed_weight)
+    # tmpF(net)
     return net
 def prepareOpt(net):
     return optim.SGD(net.getWeight(), lr=initial_lr, momentum=momentum,
-                weight_decay=weight_decay)  # 是否采取 weight_decay
-    return optim.SGD(net.parameters(), lr=initial_lr, momentum=momentum,
                     weight_decay=weight_decay)  # 是否采取 weight_decay
 
 def saveCheckPoint(kth, epoch, optimizer, net, lossRecord, accReocrd):
@@ -157,10 +137,11 @@ def compareNet(alexnet, net):
         
         
 def tmpF(net):
+    print("tmpF")
     for netLayerName , netLyaerPara in net.named_parameters():
         print(netLayerName)
-        print(netLyaerPara.data.sum())
-        break
+        print(netLyaerPara.data)
+        
 def weightCount(net):
     count = 0
     for netLayerName , netLyaerPara in net.named_parameters():
@@ -244,7 +225,6 @@ if __name__ == '__main__':
     torch.set_default_dtype(torch.float32) #* torch.float will slow the training speed
     valList = []
     cfg = cfg_newnasmodel   
-
     for k in range(0, cfg["numOfKth"]):
         #info handle stdout to a file
         if stdoutTofile:
@@ -255,10 +235,13 @@ if __name__ == '__main__':
         seed_weight = seed[str(k)]
             
         args = parse_args(str(k))
+            
         accelerateByGpuAlgo(cfg["cuddbenchMark"])
         set_seed_cpu(seed_weight)
         #! test same initial weight
+        
         makeAllDir()
+            
         batch_size = cfg['batch_size']
 
         #todo find what do these stuff do
@@ -267,10 +250,6 @@ if __name__ == '__main__':
         weight_decay = args.weight_decay
         initial_lr = args.lr
         gamma = args.gamma
-
-        
-
-        # writer = SummaryWriter(log_dir=folder["tensorboard_retrain"], comment="{}th".format(str(k)))
         
         print("seed_weight{} start at ".format(seed_weight), getCurrentTime())
         print("cfg", cfg)
@@ -278,12 +257,13 @@ if __name__ == '__main__':
         #info training process 
         trainData, valData = prepareDataSet()
         trainDataLoader, valDataLoader = prepareDataLoader(trainData, valData)
+    
+        
         criterion = prepareLossFunction()
         net = prepareModel(k)
         histDrawer = HistDrawer(folder["pltSavedDir"])
         histDrawer.drawNetConvWeight(net, tag="ori_{}".format(str(k)))
         model_optimizer = prepareOpt(net)
-        
         #info test controller
         testC = TestController(cfg, device)
         testC.printAllModule(net)
@@ -291,7 +271,7 @@ if __name__ == '__main__':
         valC = ValController(cfg, device, valDataLoader, criterion)
         # info training loop
         last_epoch_val_acc, lossRecord, accRecord = myTrain(k, trainData, trainDataLoader, valDataLoader, net, model_optimizer, criterion, writer=None)  # 進入model訓練
-        print("getBetaDict()", net.getBetaDict())
+
         histDrawer.drawNetConvWeight(net, tag="trained_{}".format(str(k)))
         #info record training processs
         alMonitor = AccLossMonitor(k, folder["pltSavedDir"], folder["accLossDir"], trainType="retrain")
