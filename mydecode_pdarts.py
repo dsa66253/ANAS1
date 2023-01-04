@@ -5,7 +5,7 @@ from os import listdir
 import numpy as np
 from feature.make_dir import makeDir
 import sys
-from data.config import featureMap, PRIMITIVES, folder
+from data.config import featureMap, PRIMITIVES, folder, cfg_nasmodel as cfg
 import copy
 # this file just use to plot figure that shows alphas' variation during training
 def printToDecodeFile(decodeJson, kth):
@@ -189,7 +189,7 @@ if __name__ == '__main__':
     # for key in data:
     #     print(key, data[key])
     # exit()
-    for kth in range(0, 3):
+    for kth in range(0, cfg["numOfKth"]):
         pickerLayerList = decodeAllLayer(kth)
         print("pickerLayerList", pickerLayerList)
         toSaveDict = decodeAllOperation(kth, pickerLayerList)
