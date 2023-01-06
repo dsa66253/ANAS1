@@ -310,7 +310,7 @@ def plot_betaGrad_line_chart():
         plot_beta_line_chart(toPrintBetaDict, fileName="betaGrad.{}th".format(str(kth)))
 def plot_beta_line_chart_by_same_dest():
     betaDict = getBetaDict()
-    for kth in range(3):
+    for kth in range(cfg["numOfKth"]):
         #info get kth dict
         kthBetaDict = {}
         for layerName in betaDict:

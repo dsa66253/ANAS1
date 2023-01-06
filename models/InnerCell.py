@@ -9,7 +9,7 @@ class InnerCell(nn.Module):
         super(InnerCell, self).__init__()
         self.NasMode = NasMode
         if self.NasMode:
-            self.beta =  nn.Parameter(torch.FloatTensor([0.5]))
+            self.beta =  nn.Parameter(torch.FloatTensor([0.1]))
         else:
             self.beta =  nn.Parameter(torch.FloatTensor([1]))
         self.transArchPerInnerCell= []

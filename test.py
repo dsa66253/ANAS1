@@ -230,12 +230,22 @@ class TestController:
     def prepareDataLoader(self, test_data):
         test_loader = torch.utils.data.DataLoader(test_data, batch_size=self.cfg["batch_size"], num_workers=0, shuffle=False)
         return test_loader
+def getKth():
+    #info load full layer json
+    filePath = "./curExperiment.json"
+    f = open(filePath)
+    seedDict = json.load(f)
+    for key in seedDict:
+        return seedDict[key]
+    
 if __name__ == '__main__':
     # print("main fucntion")
     torch.set_printoptions(precision=6, sci_mode=False, threshold=1000)
     device = get_device()
     valList = []
     for kth in range(cfg["numOfKth"]):
+        #info kth from curExperiment.json
+        # k = int(getKth())
         #info handle stdout to a file
         if stdoutTofile:
             trainLogDir = "./log"
