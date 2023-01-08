@@ -60,8 +60,29 @@ class Model(nn.Module):
         #! why assign 0 as initial value make grad equal to 0
         # self.__initailizeAlphas()
         # self.alphasMask = torch.full(self._alphas.shape, False, dtype=torch.bool) #* True means that element are masked(dropped)
-        
+        if self.NasMode:
+            self.setInitialBeta()
         #* self.alphas can get the attribute
+    def setInitialBeta(self):
+        # info initialize
+        sameTargetDict = {}
+        for k in self.layerDict.keys():
+            if "layer" in k:
+                sameTargetDict[k.split("_")[2]] = []
+                # print(self.layerDict[k].getBeta())
+        for k in self.layerDict.keys():
+            if "layer" in k:
+                sameTargetDict[k.split("_")[2]].append(k)
+        # info set beta to average
+        for targetNum in sameTargetDict:
+            sumOfBeta = torch.tensor(0.0)
+            for layerName in sameTargetDict[targetNum]:
+                # print(self.layerDict[layerName].getBeta()[0])
+                sumOfBeta = sumOfBeta + self.layerDict[layerName].getBeta()[0]
+            for layerName in sameTargetDict[targetNum]:
+                self.layerDict[layerName].setBeta("innerCell_0", self.layerDict[layerName].getBeta()[0]/sumOfBeta)
+                # print(layerName, self.layerDict[layerName].getBeta()[0])
+                
     def getAlphasDict(self):
         return self.alphasDict
 
