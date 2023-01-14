@@ -39,7 +39,7 @@ def brutNas():
     for kth in range(cfg["numOfKth"]):
 
         f = setStdoutToFile("./curExperiment.json")
-        curExpName = "0103"
+        curExpName = "0103redo"
         desDir = join("./log", curExpName)
         print(json.dumps({curExpName:str(kth)}, indent=4))
         setStdoutToDefault(f)
