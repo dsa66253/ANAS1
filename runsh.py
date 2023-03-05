@@ -1,6 +1,14 @@
 import subprocess
-import json, os, sys
-
+import json, os, sys, copy
+from os.path import isfile, join
+from data.config import folder, cfg_nasmodel as cfg, seed
+def makeAllDir():
+    for folderName in folder:
+        print("making folder ", folder[folderName])
+        makeDir(folder[folderName])
+def makeDir(folderPath):
+    if not os.path.exists(folderPath):
+        os.makedirs(folderPath)
 def setStdoutToFile(filePath):
     f = open(filePath, 'w')
     sys.stdout = f
@@ -8,18 +16,14 @@ def setStdoutToFile(filePath):
 def setStdoutToDefault(f):
     f.close()
     sys.stdout = sys.__stdout__
-if __name__=="__main__":
-    # load json
-
+def doExpBasedExperiments():
     conti = True
     while conti:
         filePath = os.path.join("./experiments.json")
         f = open(filePath)
         exp = json.load(f)
-
         finishCount = 0
         for expName in exp:
-            
             if exp[expName]==0:
                 # exp[expName]=1
                 # f = setStdoutToFile("./experiments.json")
@@ -31,4 +35,51 @@ if __name__=="__main__":
             if finishCount==len(exp):
                 exit()
         print("finish trina.sh")
+def brutNas():
+    initiManualAssign = {
+        "layer_0_1": [
+            1,
+            0,
+            0,
+            0,
+            0
+        ],
+        "layer_1_3": [
+            1,
+            0,
+            0,
+            0,
+            0
+        ],
+        "layer_3_5": [
+            1,
+            0,
+            0,
+            0,
+            0
+        ],
+    }
+    for kth in range(cfg["numOfKth"]):
+        f = setStdoutToFile("./curExperiment.json")
+        curExpName = "0302"
+        desDir = join("./log", curExpName)
+        print(json.dumps({curExpName:str(kth)}, indent=4))
+        setStdoutToDefault(f)
+
+        makeDir(desDir)
+        makeAllDir()
+
+        manualAssign = copy.deepcopy(initiManualAssign)
+        filePath = "./decode/{}th_decode.json".format(kth)
+        f = setStdoutToFile(filePath)
+        print(json.dumps(manualAssign, indent=4)) #* make ndarray to list
+        setStdoutToDefault(f)   
+        # exit()
+    subprocess.call('./train.sh')
+
+
+if __name__=="__main__":
+    brutNas()
+
+    
 
