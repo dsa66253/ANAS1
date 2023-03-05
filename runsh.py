@@ -39,7 +39,7 @@ def brutNas():
     for kth in range(cfg["numOfKth"]):
 
         f = setStdoutToFile("./curExperiment.json")
-        curExpName = "0103redo"
+        curExpName = "0303"
         desDir = join("./log", curExpName)
         print(json.dumps({curExpName:str(kth)}, indent=4))
         setStdoutToDefault(f)
@@ -47,7 +47,7 @@ def brutNas():
         makeDir(desDir)
         makeAllDir()
         # exit()
-        subprocess.call('./train.sh')
+    subprocess.call('./train.sh')
 
 
 if __name__=="__main__":
