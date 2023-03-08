@@ -10,7 +10,7 @@ python3 test.py
 python3 plotAcc.py
 
 # python3 handleCurExperiment.py
-
+# python3 refresh.py
 # python3 trainAlex.py
 # python3 testAlex.py
 # python3 plotAcc.py

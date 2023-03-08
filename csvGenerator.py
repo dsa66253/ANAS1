@@ -1,39 +1,35 @@
 import csv, json, os
 from data.config import folder
+import numpy as np
 class csvGenerator():
-    def __init__(self, expName, path) -> None:
+    def __init__(self, expName, path, keyList) -> None:
         self.path = path
         self.expName = expName
-
-    def appendRow(self, header:list, rows:list):
+        self.keyList = keyList
+        self.expectHeader = ["expName", "kth", "layer0_1", "layer0_2", "testAcc", "valAcc"]
+    def writeHeader(self):
         with open(self.path, 'a', encoding='UTF8') as f:
-            writer = csv.writer(f)
-            # write the header
-            writer = csv.DictWriter(f, fieldnames=header)
+            writer = csv.DictWriter(f, fieldnames=self.keyList)
             writer.writeheader()
+    def appendRow(self, dicRows:list):
+        with open(self.path, 'a', encoding='UTF8') as f:
+            writer = csv.DictWriter(f, fieldnames=self.keyList)
             # write the data
-            writer.writerows(rows)
+            writer.writerow(dicRows)
+def getAccByMaxVal(self, i, j, k, baseDir):
+    valAcc = np.load( "./log/{}/accLoss/retrain_val_acc_{}.npy".format(baseDir, str(k)) )
+    testAcc = np.load("./log/{}/accLoss/retrain_test_acc_{}.npy".format(baseDir, str(k)) )
+    valIndex = np.argmax(valAcc)
+    return round(testAcc[valIndex], 2)
 if __name__=="__main__":
-    print("helo")
-    fields = ["name", "area", "country_code2", "country_code3"]
-    rows = [
-        {'name': 'Albania',
-        'area': 28748,
-        'country_code2': 'AL',
-        'country_code3': 'ALB'},
-        {'name': 'Algeria',
-        'area': 2381741,
-        'country_code2': 'DZ',
-        'country_code3': 'DZA'},
-        {'name': 'American Samoa',
-        'area': 199,
-        'country_code2': 'AS',
-        'country_code3': 'ASM'}
-    ]
-    kth = 0
-    filePath = os.path.join(folder["decode"], "{}th_decode.json".format(kth))
-    f = open(filePath)
-    archDict = json.load(f)
-    csvG = csvGenerator("test", "./countries.csv")
-    csvG.appendRow(archDict.keys(), [archDict])
+    expNameList = [""]
+    for expName in expNameList:
+        
+        kth = 0
+        filePath = os.path.join(folder["decode"], "{}th_decode.json".format(kth))
+        f = open(filePath)
+        archDict = json.load(f)
+        keys = list(archDict.keys())
+        csvG = csvGenerator("test", "./countries.csv", keys)
+        csvG.appendRow(archDict)
     

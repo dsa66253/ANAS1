@@ -38,37 +38,58 @@ def doExpBasedExperiments():
 def brutNas():
     initiManualAssign = {
         "layer_0_1": [
+            0,
+            0,
+            0,
+            0,
+            1
+        ],
+        "layer_1_2": [
+            0,
+            1,
+            0,
+            0,
+            0
+        ],
+        "layer_2_3": [
             1,
             0,
             0,
             0,
             0
         ],
-        "layer_1_3": [
+        "layer_3_4": [
             1,
             0,
             0,
             0,
             0
         ],
-        "layer_3_5": [
+        "layer_4_5": [
             1,
             0,
             0,
             0,
             0
         ],
+        # "layer_3_5": [
+        #     1,
+        #     0,
+        #     0,
+        #     0,
+        #     0
+        # ],
     }
+
+
+    curExpName = "0306_2"
+    desDir = join("./log", curExpName)
+    makeDir(desDir)
+    makeAllDir()
     for kth in range(cfg["numOfKth"]):
         f = setStdoutToFile("./curExperiment.json")
-        curExpName = "0302"
-        desDir = join("./log", curExpName)
         print(json.dumps({curExpName:str(kth)}, indent=4))
         setStdoutToDefault(f)
-
-        makeDir(desDir)
-        makeAllDir()
-
         manualAssign = copy.deepcopy(initiManualAssign)
         filePath = "./decode/{}th_decode.json".format(kth)
         f = setStdoutToFile(filePath)
