@@ -216,7 +216,14 @@ def myTrain(kth, trainData, trainDataLoader, valDataLoader, net, model_optimizer
     
     return last_epoch_val_acc, lossRecord, accRecord
 
-
+def getKth():
+    #info load full layer json
+    filePath = "./curExperiment.json"
+    f = open(filePath)
+    seedDict = json.load(f)
+    for key in seedDict:
+        return seedDict[key]
+    
 if __name__ == '__main__':
     device = get_device()
     torch.device(device)
@@ -226,6 +233,8 @@ if __name__ == '__main__':
     valList = []
     cfg = cfg_newnasmodel   
     for k in range(0, cfg["numOfKth"]):
+        #info kth from curExperiment.json
+        # k = int(getKth())
         #info handle stdout to a file
         if stdoutTofile:
             f = setStdoutToFile(folder["log"]+"/retrain_5cell_{}th.txt".format(str(k)))

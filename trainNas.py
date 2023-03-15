@@ -282,7 +282,13 @@ def myTrain(kth, trainData, train_loader, val_loader, net, model_optimizer, nas_
     torch.save(net.state_dict(), os.path.join(folder["retrainSavedModel"], cfg['name'] + str(kth) + '_Final.pt'))
     
     return last_epoch_val_acc, lossRecord, accRecord
-    
+def getKth():
+    #info load full layer json
+    filePath = "./curExperiment.json"
+    f = open(filePath)
+    seedDict = json.load(f)
+    for key in seedDict:
+        return seedDict[key]
 if __name__ == '__main__':
     device = get_device()
     torch.device(device)
@@ -292,11 +298,14 @@ if __name__ == '__main__':
     valList = []
     
     for k in range(0, cfg["numOfKth"]):
+        #info kth from curExperiment.json
+        # k = int(getKth())
+        
         #info set stdout to file
         if stdoutTofile:
             f = setStdoutToFile( os.path.join( folder["log"], "train_nas_5cell_{}th.txt".format(str(k)) ) )
         print("working directory ", os.getcwd())
-
+        
         #info set seed
         seed_weight = seed[str(k)]
         accelerateByGpuAlgo(cfg["cuddbenchMark"])

@@ -56,7 +56,7 @@ def openCurExp():
 if __name__=="__main__":
     curExpName = openCurExp()
     desDir = join("./log", curExpName)
-    # copy log
+    # move log
     fileNameList = getAllFileName("./log")
     desDir2 =  join(desDir, "log")
     makeDir(desDir2)
@@ -76,6 +76,11 @@ if __name__=="__main__":
     desDir2 =  join(desDir, "accLoss")
     makeDir(desDir2)
     copyFile(fileNameList, "./accLoss", desDir2)
+    # copy beta
+    fileNameList = getAllFileName("./betaLog")
+    desDir2 =  join(desDir, "betaLog")
+    makeDir(desDir2)
+    copyFile(fileNameList, "./betaLog", desDir2)
 
 
 

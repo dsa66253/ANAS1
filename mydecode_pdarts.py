@@ -87,12 +87,12 @@ def manualAssign(kth):
 def decodeOperation(allAlphas):
     takeNumOfOp = 1
     finalAlpha = allAlphas[-1] #* take the last epoch
-
     sortAlphaIndex = np.argsort(finalAlpha) #* from least to largest
     sortAlphaIndex = sortAlphaIndex[::-1] #* reverse ndarray
     res = np.full_like(finalAlpha, 0, dtype=np.int32)
     for i in range(takeNumOfOp):
         res[sortAlphaIndex[i]] = 1
+    return [1,0,0,0,0]
     return res.tolist() #* make ndarray to list
 def decodeAllOperation(kth, pickedLayerList=None):
     fileNameList = []
@@ -117,15 +117,14 @@ def decodeAllOperation(kth, pickedLayerList=None):
             for pickedLayerName in pickedLayerList:
                 if (fileName.split("th")[0]==str(kth)) and (pickedLayerName in fileName):
                     fileNameList.append(fileName)
-        
         for fileName in fileNameList:
             #* load alpha npy file
             filePath = os.path.join(folder["alpha_pdart_nodrop"], fileName)
             alphaPerLayer = np.load(filePath)
             key = fileName.split(".")[0]
             key = key.split("th_")[1] # eg:layer0_1
+            print("fileName", fileName, alphaPerLayer.shape)
             decodeDict[key] = decodeOperation(alphaPerLayer)
-        
         #info create complete decode Dict
         toSaveDict = copy.deepcopy(emptyArch) # it need to be deep copied
         for layerName in decodeDict:
@@ -176,7 +175,13 @@ def decodeAllLayer(kth):
             break
     
     return pickerLayerList
-            
+def getKth():
+    #info load full layer json
+    filePath = "./curExperiment.json"
+    f = open(filePath)
+    seedDict = json.load(f)
+    for key in seedDict:
+        return seedDict[key]
 if __name__ == '__main__': 
     # filePath = "./decode/decode.json"
     # setStdoutToFile(filePath)
@@ -190,6 +195,7 @@ if __name__ == '__main__':
     #     print(key, data[key])
     # exit()
     for kth in range(0, cfg["numOfKth"]):
+        # kth = int(getKth)
         pickerLayerList = decodeAllLayer(kth)
         print("pickerLayerList", pickerLayerList)
         toSaveDict = decodeAllOperation(kth, pickerLayerList)
