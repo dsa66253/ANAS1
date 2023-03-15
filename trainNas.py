@@ -325,7 +325,7 @@ if __name__ == '__main__':
         criterion = prepareLossFunction()
         net = prepareModel(k)
         histDrawer = HistDrawer(folder["pltSavedDir"])
-        # histDrawer.drawNetConvWeight(net, tag="ori_{}".format(str(k)))
+        histDrawer.drawNetConvWeight(net, tag="NAS_ori_{}".format(str(k)))
         #info test
         testC = TestController(cfg, device)
         writer = SummaryWriter(log_dir=folder["tensorboard_trainNas"], comment="{}th".format(str(k)))
