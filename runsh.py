@@ -37,34 +37,34 @@ def doExpBasedExperiments():
         print("finish trina.sh")
 def brutNas():
     initiManualAssign = {
-        "layer_0_1": [
+        "layer_0_4": [
             0,
             0,
             0,
             0,
             1
         ],
-        "layer_1_2": [
-            0,
-            0,
-            0,
-            0,
-            1
-        ],
-        "layer_2_3": [
-            0,
-            0,
-            0,
-            0,
-            1
-        ],
-        "layer_3_4": [
-            0,
-            0,
-            0,
-            0,
-            1
-        ],
+        # "layer_1_2": [
+        #     0,
+        #     0,
+        #     0,
+        #     0,
+        #     1
+        # ],
+        # "layer_2_3": [
+        #     0,
+        #     0,
+        #     0,
+        #     0,
+        #     1
+        # ],
+        # "layer_3_4": [
+        #     0,
+        #     0,
+        #     0,
+        #     0,
+        #     1
+        # ],
         "layer_4_5": [
             0,
             0,
@@ -82,23 +82,23 @@ def brutNas():
     }
 
 
-    curExpName = "0315"
+    curExpName = "0316"
     desDir = join("./log", curExpName)
     makeDir(desDir)
     makeAllDir()
-    # f = setStdoutToFile("./curExperiment.json")
-    # print(json.dumps({curExpName:str(1)}, indent=4))
-    # setStdoutToDefault(f)
-    for kth in range(cfg["numOfKth"]):
-        f = setStdoutToFile("./curExperiment.json")
-        print(json.dumps({curExpName:str(kth)}, indent=4))
-        setStdoutToDefault(f)
-        manualAssign = copy.deepcopy(initiManualAssign)
-        filePath = "./decode/{}th_decode.json".format(kth)
-        f = setStdoutToFile(filePath)
-        print(json.dumps(manualAssign, indent=4)) #* make ndarray to list
-        setStdoutToDefault(f)   
-        # exit()
+    f = setStdoutToFile("./curExperiment.json")
+    print(json.dumps({curExpName:str(1)}, indent=4))
+    setStdoutToDefault(f)
+    # for kth in range(cfg["numOfKth"]):
+    #     f = setStdoutToFile("./curExperiment.json")
+    #     print(json.dumps({curExpName:str(kth)}, indent=4))
+    #     setStdoutToDefault(f)
+    #     manualAssign = copy.deepcopy(initiManualAssign)
+    #     filePath = "./decode/{}th_decode.json".format(kth)
+    #     f = setStdoutToFile(filePath)
+    #     print(json.dumps(manualAssign, indent=4)) #* make ndarray to list
+    #     setStdoutToDefault(f)   
+    #     # exit()
     subprocess.call('./train.sh')
 
 
