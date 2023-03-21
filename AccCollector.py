@@ -60,11 +60,12 @@ class AccCollector():
                 #* get last epoch acc
                 # loadPath = "./log/{}/{}.{}_{}/accLoss/retrain_{}_acc_{}.npy".format(baseDir, baseDir, str(i), str(j), dataset, str(k)) 
                 loadPath = "./log/{}/accLoss/retrain_{}_acc_{}.npy".format(baseDir, dataset, str(k)) 
+                
                 # print(loadPath)
                 # print(np.load(loadPath))
                 # acc = round(np.load(loadPath)[-1], 2)
                 #* get test acc by correspoding max val acc
-                acc = self.__getAccByMaxValANAS(k, baseDir)
+                acc = self.__getAccByMaxValANAS(k, baseDir, expName)
                 data.append(acc)
                 # self.a.append([expAcc, k , acc])
             print(expName, data)
@@ -82,9 +83,13 @@ class AccCollector():
         # self.axs.set_ylim([self.ymin, self.ymax])
         self.axs.set_yticks(np.arange(self.ymin, self.ymax, 1))
         plt.xticks(rotation=90)
-    def __getAccByMaxValANAS(self, k, baseDir):
-        valAcc = np.load( "./log/{}/accLoss/retrain_val_acc_{}.npy".format(baseDir, str(k)) )
-        testAcc = np.load("./log/{}/accLoss/retrain_test_acc_{}.npy".format(baseDir, str(k)) )
+    def __getAccByMaxValANAS(self, k, baseDir, expName):
+        if expName in ["0309_3"]:
+            valAcc = np.load( "./log/{}/accLoss/Nas_val_acc_{}.npy".format(baseDir, str(k))  )
+            testAcc = np.load( "./log/{}/accLoss/Nas_test_acc_{}.npy".format(baseDir, str(k))  )
+        else:
+            valAcc = np.load( "./log/{}/accLoss/retrain_val_acc_{}.npy".format(baseDir, str(k)) )
+            testAcc = np.load("./log/{}/accLoss/retrain_test_acc_{}.npy".format(baseDir, str(k)) )
         valIndex = np.argmax(valAcc)
         return round(testAcc[valIndex], 2)
     def savePlt(self, dataset):
@@ -222,9 +227,9 @@ def getLoss():
         accC.calDiffValTest("test", expName=exp)
 if __name__=="__main__":
     np.set_printoptions(precision=2)
-    accC = AccCollector("0314_2", fileNameTag="_0316_3")
+    accC = AccCollector("0309_3", fileNameTag="_0323_1")
     testOrVal = "test"
-    ANASList = ["0314_2"]
+    ANASList = ["0309_3"]
     accC.addANASExp(ANASList, color="red", dataset=testOrVal, title="_".join(ANASList))
     # ANASList = ["0108", "0109"]
     # accC.addANASExp("0102", color="green", dataset=testOrVal, title="_".join(ANASList))
