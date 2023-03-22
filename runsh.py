@@ -82,7 +82,7 @@ def brutNas():
     }
 
 
-    curExpName = "0316"
+    curExpName = "0322_2"
     desDir = join("./log", curExpName)
     makeDir(desDir)
     makeAllDir()
