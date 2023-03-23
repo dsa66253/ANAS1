@@ -92,7 +92,7 @@ def decodeOperation(allAlphas):
     res = np.full_like(finalAlpha, 0, dtype=np.int32)
     for i in range(takeNumOfOp):
         res[sortAlphaIndex[i]] = 1
-    return [0,0,0,0,1]
+    # return [0,0,0,0,1]
     return res.tolist() #* make ndarray to list
 def decodeAllOperation(kth, pickedLayerList=None):
     fileNameList = []
