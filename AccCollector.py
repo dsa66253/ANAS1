@@ -83,7 +83,7 @@ class AccCollector():
         self.axs.set_yticks(np.arange(self.ymin, self.ymax, 1))
         plt.xticks(rotation=90)
     def __getAccByMaxValANAS(self, k, baseDir, expName):
-        if expName in ["0322_2"]:
+        if expName in ["0322_4"]:
             valAcc = np.load( "./log/{}/accLoss/Nas_val_acc_{}.npy".format(baseDir, str(k))  )
             testAcc = np.load( "./log/{}/accLoss/Nas_test_acc_{}.npy".format(baseDir, str(k))  )
         else:
@@ -226,9 +226,9 @@ def getLoss():
         accC.calDiffValTest("test", expName=exp)
 if __name__=="__main__":
     np.set_printoptions(precision=2)
-    accC = AccCollector("0322_3", fileNameTag="_0323_3")
+    accC = AccCollector("0322_4", fileNameTag="_0323_4")
     testOrVal = "test"
-    ANASList = ["0314", "0322_3", "0312", "0313", "0322_2"]
+    ANASList = ["0308", "0226_10", "0306_2", "0309", "0322_4"]
     accC.addANASExp(ANASList, color="red", dataset=testOrVal, title="_".join(ANASList))
     # ANASList = ["0108", "0109"]
     # accC.addANASExp("0102", color="green", dataset=testOrVal, title="_".join(ANASList))
