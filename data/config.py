@@ -1,5 +1,5 @@
 # config.py
-datasetRoot = "../dataset"
+datasetRoot = "../dataset2"
 trainDataSetFolder = datasetRoot+"/train"
 testDataSetFolder = datasetRoot+"/test"
 PRIMITIVES = [
@@ -56,13 +56,13 @@ seed = {
     "0": 10,
     "1": 255,
     "2": 830,
-    "3": 1830,
-    "4": 2830,
-    "5": 3830,
-    "6": 4830,
-    "7": 5830,
-    "8": 6830,
-    "9": 7830,
+    # "3": 1830,
+    # "4": 2830,
+    # "5": 3830,
+    # "6": 4830,
+    # "7": 5830,
+    # "8": 6830,
+    # "9": 7830,
     # "0": 110,
     # "1": 1255,
     # "2": 1830,
