@@ -103,6 +103,7 @@ def brutNas():
     "0329_19",
     "0329_20",
     "0329_21",
+    "0329_22",
     ]
     for curExpName in expNameList:
         # curExpName = "0323"
