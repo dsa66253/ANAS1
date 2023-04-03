@@ -37,8 +37,11 @@ class HistDrawer():
         # print(tensor)
         table = ax[0].table(table, background, bbox=[0, 0, 1, 1])
         table.set_fontsize(50)
-        binCount = np.arange(torch.min(tensor).item(), torch.max(tensor).item(), 0.005)
-        ax[1].hist(np.reshape(tensor.data.cpu().numpy(), (-1)), bins=100)
+        try:
+            binCount = np.arange(torch.min(tensor).item(), torch.max(tensor).item(), 0.005)
+            ax[1].hist(np.reshape(tensor.data.cpu().numpy(), (-1)), bins=100)
+        except Exception as e:
+            print(e, "tensor", tensor)
         
         
         try:
