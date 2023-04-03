@@ -54,7 +54,7 @@ def initialize_weights(model, seed):
             # exp2IniFunc[curExp](m.weight)
             # torch.nn.init.kaiming_normal_(m.weight)
             # m.weight = torch.abs(m.weight)
-            # torch.nn.init.uniform_(m.weight, -0.005/2, 0.005/2)
+            torch.nn.init.uniform_(m.weight, -0.05/4, 0.05/4),
             # m.weight.data.fill_(0)
             # setTensorPositive(m.weight)
             # torch.nn.init.normal_(m.weight, 0.025, 0.025/2)
@@ -62,10 +62,10 @@ def initialize_weights(model, seed):
                 torch.nn.init.constant_(m.bias, 1)
         elif isinstance(m, nn.Linear):
             set_seed_cpu(seed)
-            exp2IniFunc[curExp](m.weight)
+            # exp2IniFunc[curExp](m.weight)
             # torch.nn.init.kaiming_normal_(m.weight)
             # setTensorPositive(m.weight.data)
-            # torch.nn.init.uniform_(m.weight, -0.005/2, 0.005/2)
+            torch.nn.init.uniform_(m.weight, -0.05/4, 0.05/4),
             # m.weight.data.fill_(0)
             # nn.init.constant_(m.bias, 0)
             # torch.nn.init.normal_(m.weight, 0.025, 0.025/2)

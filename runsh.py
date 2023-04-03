@@ -108,30 +108,30 @@ def brutNas():
     "0329_24",
     "0329_25",
     ]
-    for curExpName in expNameList:
-        # curExpName = "0323"
-        desDir = join("./log", curExpName)
-        makeDir(desDir)
-        makeAllDir()
+    # for curExpName in expNameList:
+    curExpName = "0403"
+    desDir = join("./log", curExpName)
+    makeDir(desDir)
+    makeAllDir()
     
-        # f = setStdoutToFile("./curExperiment.json")
-        # print(json.dumps({curExpName:str(1)}, indent=4))
-        # setStdoutToDefault(f)
+    f = setStdoutToFile("./curExperiment.json")
+    print(json.dumps({curExpName:str(1)}, indent=4))
+    setStdoutToDefault(f)
         
-        for kth in range(cfg["numOfKth"]):
-            f = setStdoutToFile("./curExperiment.json")
-            print(json.dumps({curExpName:str(kth)}, indent=4))
-            setStdoutToDefault(f)
-            manualAssign = copy.deepcopy(initiManualAssign)
-            filePath = "./decode/{}th_decode.json".format(kth)
-            f = setStdoutToFile(filePath)
-            print(json.dumps(manualAssign, indent=4)) #* make ndarray to list
-            setStdoutToDefault(f)   
-            # exit()
+        # for kth in range(cfg["numOfKth"]):
+        #     f = setStdoutToFile("./curExperiment.json")
+        #     print(json.dumps({curExpName:str(kth)}, indent=4))
+        #     setStdoutToDefault(f)
+        #     manualAssign = copy.deepcopy(initiManualAssign)
+        #     filePath = "./decode/{}th_decode.json".format(kth)
+        #     f = setStdoutToFile(filePath)
+        #     print(json.dumps(manualAssign, indent=4)) #* make ndarray to list
+        #     setStdoutToDefault(f)   
+        #     # exit()
 
             
             
-        subprocess.call('./train.sh')
+    subprocess.call('./train.sh')
 
 
 if __name__=="__main__":
