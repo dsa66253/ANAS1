@@ -4,6 +4,7 @@ import csv
 import os
 import matplotlib.pyplot as plt
 from utility.HistDrawer import HistDrawer
+from data.config import cfg_nasmodel as cfg
 class AccCollector():
     def __init__(self, baseDir = "1027_brutL3L4", fileNameTag=""):
         self.fileNameTag = fileNameTag
@@ -55,12 +56,11 @@ class AccCollector():
             expAcc = baseDir
             # xlabels.append(expAcc)
             data = []
-            for k in range(10):
+            for k in range(cfg["numOfKth"]):
                 # base = os.walk(baseDir)
                 #* get last epoch acc
                 # loadPath = "./log/{}/{}.{}_{}/accLoss/retrain_{}_acc_{}.npy".format(baseDir, baseDir, str(i), str(j), dataset, str(k)) 
                 loadPath = "./log/{}/accLoss/retrain_{}_acc_{}.npy".format(baseDir, dataset, str(k)) 
-                
                 # print(loadPath)
                 # print(np.load(loadPath))
                 # acc = round(np.load(loadPath)[-1], 2)
@@ -81,10 +81,10 @@ class AccCollector():
         self.axs.xaxis.grid()
         self.axs.set_title(self.title)
         # self.axs.set_ylim([self.ymin, self.ymax])
-        self.axs.set_yticks(np.arange(self.ymin, self.ymax, 1))
+        # self.axs.set_yticks(np.arange(self.ymin, self.ymax, 1))
         plt.xticks(rotation=90)
     def __getAccByMaxValANAS(self, k, baseDir, expName):
-        if expName in ["0309_3"]:
+        if expName in ["0322_3"]:
             valAcc = np.load( "./log/{}/accLoss/Nas_val_acc_{}.npy".format(baseDir, str(k))  )
             testAcc = np.load( "./log/{}/accLoss/Nas_test_acc_{}.npy".format(baseDir, str(k))  )
         else:
