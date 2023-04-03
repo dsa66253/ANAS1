@@ -25,6 +25,7 @@ exp2IniFunc = {
     "0329_12": lambda weight: torch.nn.init.uniform_(weight, -0.05/4, 0.05/4),
     "0329_13": lambda weight: torch.nn.init.uniform_(weight, -0.05/8, 0.05/8),
     "0329_14": lambda weight: torch.nn.init.uniform_(weight, -0.05/16, 0.05/16),
+    "0329_25": lambda weight: torch.nn.init.uniform_(weight, -0.05/32, 0.05/32),
     "0329_15": lambda weight: torch.nn.init.normal_(weight, 0, 1/2),
     "0329_16": lambda weight: torch.nn.init.normal_(weight, 1/2, 1/2),
     "0329_17": lambda weight: torch.nn.init.normal_(weight, -1/2, 1/2),
@@ -32,7 +33,9 @@ exp2IniFunc = {
     "0329_19": lambda weight: torch.nn.init.normal_(weight, 0, 0.1/2),
     "0329_20": lambda weight: torch.nn.init.normal_(weight, 0, 0.1/4),
     "0329_21": lambda weight: torch.nn.init.normal_(weight, 0, 0.01/2),
-    "0329_22": lambda weight: torch.nn.init.kaiming_normal_(weight),
+    "0329_22": lambda weight: torch.nn.init.normal_(weight, 0, 0.01/4),
+    "0329_23": lambda weight: torch.nn.init.normal_(weight, 0, 0.001/2),
+    "0329_24": lambda weight: torch.nn.init.kaiming_normal_(weight),
 }
 def openCurExp():
     filePath = os.path.join("./curExperiment.json")
@@ -48,7 +51,7 @@ def initialize_weights(model, seed):
     for m in model.modules():
         if isinstance(m, nn.Conv2d):
             set_seed_cpu(seed)
-            exp2IniFunc[curExp](m.weight)
+            # exp2IniFunc[curExp](m.weight)
             # torch.nn.init.kaiming_normal_(m.weight)
             # m.weight = torch.abs(m.weight)
             # torch.nn.init.uniform_(m.weight, -0.005/2, 0.005/2)

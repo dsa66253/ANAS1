@@ -4,6 +4,7 @@ import csv
 import os
 import matplotlib.pyplot as plt
 from utility.HistDrawer import HistDrawer
+from data.config import cfg_nasmodel as cfg
 class AccCollector():
     def __init__(self, baseDir = "1027_brutL3L4", fileNameTag=""):
         self.fileNameTag = fileNameTag
@@ -55,12 +56,11 @@ class AccCollector():
             expAcc = baseDir
             # xlabels.append(expAcc)
             data = []
-            for k in range(10):
+            for k in range(cfg["numOfKth"]):
                 # base = os.walk(baseDir)
                 #* get last epoch acc
                 # loadPath = "./log/{}/{}.{}_{}/accLoss/retrain_{}_acc_{}.npy".format(baseDir, baseDir, str(i), str(j), dataset, str(k)) 
                 loadPath = "./log/{}/accLoss/retrain_{}_acc_{}.npy".format(baseDir, dataset, str(k)) 
-                
                 # print(loadPath)
                 # print(np.load(loadPath))
                 # acc = round(np.load(loadPath)[-1], 2)
@@ -81,10 +81,10 @@ class AccCollector():
         self.axs.xaxis.grid()
         self.axs.set_title(self.title)
         # self.axs.set_ylim([self.ymin, self.ymax])
-        self.axs.set_yticks(np.arange(self.ymin, self.ymax, 1))
+        # self.axs.set_yticks(np.arange(self.ymin, self.ymax, 1))
         plt.xticks(rotation=90)
     def __getAccByMaxValANAS(self, k, baseDir, expName):
-        if expName in ["0309_3"]:
+        if expName in ["0322_3"]:
             valAcc = np.load( "./log/{}/accLoss/Nas_val_acc_{}.npy".format(baseDir, str(k))  )
             testAcc = np.load( "./log/{}/accLoss/Nas_test_acc_{}.npy".format(baseDir, str(k))  )
         else:
@@ -227,9 +227,36 @@ def getLoss():
         accC.calDiffValTest("test", expName=exp)
 if __name__=="__main__":
     np.set_printoptions(precision=2)
-    accC = AccCollector("0309_3", fileNameTag="_0323_1")
+    accC = AccCollector("0329_1", fileNameTag="_0330_4")
     testOrVal = "test"
-    ANASList = ["0309_3"]
+    # ANASList = ["0324_21", "0324_22", "0324_23","0324_11", "0324_12", "0324_13", "0324_14", "0324_15", "0324_16", "0324_17,", "0324_18", "0324_19", "0324_20"]
+    ANASList = [
+    "0329_1",
+    "0329_2",
+    "0329_3",
+    "0329_4",
+    "0329_5",
+    "0329_6",
+    "0329_7",
+    "0329_8",
+    "0329_9",
+    "0329_10",
+    "0329_11",
+    "0329_12",
+    "0329_13",
+    "0329_14",
+    "0329_15",
+    "0329_16",
+    "0329_17",
+    "0329_18",
+    "0329_19",
+    "0329_20",
+    "0329_21",
+    "0329_22",
+    "0329_23",
+    "0329_24",
+    "0329_25"
+    ]
     accC.addANASExp(ANASList, color="red", dataset=testOrVal, title="_".join(ANASList))
     # ANASList = ["0108", "0109"]
     # accC.addANASExp("0102", color="green", dataset=testOrVal, title="_".join(ANASList))
