@@ -50,7 +50,7 @@ def initialize_weights(model, seed):
     for m in model.modules():
         if isinstance(m, nn.Conv2d):
             set_seed_cpu(seed)
-            # exp2IniFunc[curExp](m.weight)
+            exp2IniFunc[curExp](m.weight)
             # torch.nn.init.kaiming_normal_(m.weight)
             # m.weight = torch.abs(m.weight)
             torch.nn.init.uniform_(m.weight, -0.05/4, 0.05/4),
