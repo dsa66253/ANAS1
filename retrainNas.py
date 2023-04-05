@@ -25,7 +25,7 @@ accelerateButUndetermine = cfg_newnasmodel["cuddbenchMark"]
 recover = False
 def printNetGrad(net):
     for name, para in net.named_parameters():
-        print("grad", name, "\n", para)
+        print("grad", name, "\n", para.grad)
         break
 def parse_args(k=0):
     parser = argparse.ArgumentParser(description='imagenet nas Training')
@@ -174,7 +174,6 @@ def myTrain(kth, trainData, trainDataLoader, valDataLoader, net, model_optimizer
         train_loss = 0.0
         val_acc = 0.0
         val_loss = 0.0
-
         # training
         # tqdm(range(start_iter, max_iter), unit =" iter on {}".format(kth))
         net.train() # set the model to training mode

@@ -93,10 +93,38 @@ def plot_combined_acc(folder = "./accLoss", title='combine', saveFolder="./plot"
         print("save png to ", os.path.join(saveFolder, fileName))
         plt.savefig(os.path.join(saveFolder, fileName))
 
-
+def getAccByMaxValANAS(k, baseDir, expName):
+    if expName in ["0322_3"]:
+        valAcc = np.load( "./log/{}/accLoss/Nas_val_acc_{}.npy".format(baseDir, str(k))  )
+        testAcc = np.load( "./log/{}/accLoss/Nas_test_acc_{}.npy".format(baseDir, str(k))  )
+    else:
+        valAcc = np.load( "./log/{}/accLoss/retrain_val_acc_{}.npy".format(baseDir, str(k)) )
+        testAcc = np.load("./log/{}/accLoss/retrain_test_acc_{}.npy".format(baseDir, str(k)) )
+    valIndex = np.argmax(valAcc)
+    return round(testAcc[valIndex], 2)
 if __name__=="__main__":
-    plot_combined_acc(trainType="Nas")
-    plot_combined_acc(trainType="retrain")
+
+    expNameList = ["0322_3", "0322_3_copy"]
+    acc = {}
+    for expName in expNameList:
+        data = []
+        for i in range(10):
+            data.append(getAccByMaxValANAS(i, expName, expName))
+        acc[expName] = data
+    ax = plt.subplot()
+    for expName in expNameList:
+        if expName=="0322_3":
+            ax.plot(acc[expName], c='tab:red', label=expName)
+        else:
+            ax.plot(acc[expName], c='tab:cyan', label=expName)
+    ax.set_xlabel('kth')
+    ax.set_ylabel('acc')
+    # ax.set_title(format(title))
+    ax.legend()
+    # plt.show()
+    plt.savefig("./log/0322_3/acc.png") 
+    # plot_combined_acc(trainType="Nas")
+    # plot_combined_acc(trainType="retrain")
     # net = "alexnet"
     # folder = "./accLoss" 
     # title='combine_'+net

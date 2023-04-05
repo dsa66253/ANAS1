@@ -37,28 +37,14 @@ def doExpBasedExperiments():
         print("finish trina.sh")
 def brutNas():
     initiManualAssign = {
-        "layer_0_1": [
-            0,
-            0,
-            0,
-            0,
-            1
-        ],
-        "layer_1_2": [
-            0,
-            1,
-            0,
-            0,
-            0
-        ],
-        "layer_2_3": [
+        "layer_0_2": [
             1,
             0,
             0,
             0,
             0
         ],
-        "layer_3_4": [
+        "layer_2_4": [
             1,
             0,
             0,
@@ -72,6 +58,20 @@ def brutNas():
             0,
             0
         ],
+        # "layer_3_4": [
+        #     1,
+        #     0,
+        #     0,
+        #     0,
+        #     0
+        # ],
+        # "layer_4_5": [
+        #     1,
+        #     0,
+        #     0,
+        #     0,
+        #     0
+        # ],
         # "layer_3_5": [
         #     1,
         #     0,
@@ -81,31 +81,57 @@ def brutNas():
         # ],
     }
 
-    expNameList = ["0324_11", "0324_12", "0324_13", "0324_14", "0324_15", "0324_16", "0324_17,", "0324_18", "0324_19", "0324_20", "0324_21", "0324_22", "0324_23", "0324_24"]
-    for curExpName in expNameList:
-        # curExpName = "0323"
-        desDir = join("./log", curExpName)
-        makeDir(desDir)
-        makeAllDir()
+    expNameList = [
+    "0327_1",
+    "0327_2",
+    "0327_3",
+    "0327_4",
+    "0327_5",
+    "0327_6",
+    "0327_7",
+    "0327_8",
+    "0327_9",
+    "0327_10",
+    "0327_11",
+    "0327_12",
+    "0327_13",
+    "0327_14",
+    "0327_15",
+    "0327_16",
+    "0327_17",
+    "0327_18",
+    "0327_19",
+    "0327_20",
+    "0327_21",
+    "0327_22",
+    "0327_23",
+    "0327_24",
     
-        # f = setStdoutToFile("./curExperiment.json")
-        # print(json.dumps({curExpName:str(1)}, indent=4))
-        # setStdoutToDefault(f)
+    ]
+    # for curExpName in expNameList:
+    curExpName = "0405_7"
+    desDir = join("./log", curExpName)
+    makeDir(desDir)
+    makeAllDir()
+    
+    f = setStdoutToFile("./curExperiment.json")
+    print(json.dumps({curExpName:str(1)}, indent=4))
+    setStdoutToDefault(f)
         
-        for kth in range(cfg["numOfKth"]):
-            f = setStdoutToFile("./curExperiment.json")
-            print(json.dumps({curExpName:str(kth)}, indent=4))
-            setStdoutToDefault(f)
-            manualAssign = copy.deepcopy(initiManualAssign)
-            filePath = "./decode/{}th_decode.json".format(kth)
-            f = setStdoutToFile(filePath)
-            print(json.dumps(manualAssign, indent=4)) #* make ndarray to list
-            setStdoutToDefault(f)   
-            # exit()
+    for kth in range(cfg["numOfKth"]):
+        f = setStdoutToFile("./curExperiment.json")
+        print(json.dumps({curExpName:str(kth)}, indent=4))
+        setStdoutToDefault(f)
+        manualAssign = copy.deepcopy(initiManualAssign)
+        filePath = "./decode/{}th_decode.json".format(kth)
+        f = setStdoutToFile(filePath)
+        print(json.dumps(manualAssign, indent=4)) #* make ndarray to list
+        setStdoutToDefault(f)   
+        # exit()
 
             
             
-        subprocess.call('./train.sh')
+    subprocess.call('./train.sh')
 
 
 if __name__=="__main__":
