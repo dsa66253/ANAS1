@@ -38,15 +38,15 @@ def doExpBasedExperiments():
 def brutNas():
     initiManualAssign = {
         "layer_0_1": [
+            1,
             0,
             0,
             0,
-            0,
-            1
+            0
         ],
         "layer_1_2": [
-            0,
             1,
+            0,
             0,
             0,
             0
@@ -108,7 +108,7 @@ def brutNas():
     "0328_24",
     ]
     # for curExpName in expNameList:
-    curExpName = "0404_2"
+    curExpName = "0405_3"
     desDir = join("./log", curExpName)
     makeDir(desDir)
     makeAllDir()
@@ -117,16 +117,16 @@ def brutNas():
     print(json.dumps({curExpName:str(1)}, indent=4))
     setStdoutToDefault(f)
         
-        # for kth in range(cfg["numOfKth"]):
-        #     f = setStdoutToFile("./curExperiment.json")
-        #     print(json.dumps({curExpName:str(kth)}, indent=4))
-        #     setStdoutToDefault(f)
-        #     manualAssign = copy.deepcopy(initiManualAssign)
-        #     filePath = "./decode/{}th_decode.json".format(kth)
-        #     f = setStdoutToFile(filePath)
-        #     print(json.dumps(manualAssign, indent=4)) #* make ndarray to list
-        #     setStdoutToDefault(f)   
-        #     # exit()
+    for kth in range(cfg["numOfKth"]):
+        f = setStdoutToFile("./curExperiment.json")
+        print(json.dumps({curExpName:str(kth)}, indent=4))
+        setStdoutToDefault(f)
+        manualAssign = copy.deepcopy(initiManualAssign)
+        filePath = "./decode/{}th_decode.json".format(kth)
+        f = setStdoutToFile(filePath)
+        print(json.dumps(manualAssign, indent=4)) #* make ndarray to list
+        setStdoutToDefault(f)   
+        # exit()
 
             
             
