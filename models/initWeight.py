@@ -50,7 +50,7 @@ def initialize_weights(model, seed):
     for m in model.modules():
         if isinstance(m, nn.Conv2d):
             set_seed_cpu(seed)
-            exp2IniFunc["0328_11"](m.weight)
+            exp2IniFunc["0328_12"](m.weight)
             # torch.nn.init.kaiming_normal_(m.weight)
             # m.weight = torch.abs(m.weight)
             # torch.nn.init.uniform_(m.weight, -0.05/4, 0.05/4),
@@ -61,7 +61,7 @@ def initialize_weights(model, seed):
                 torch.nn.init.constant_(m.bias, 1)
         elif isinstance(m, nn.Linear):
             set_seed_cpu(seed)
-            exp2IniFunc["0328_11"](m.weight)
+            exp2IniFunc["0328_12"](m.weight)
             # torch.nn.init.kaiming_normal_(m.weight)
             # setTensorPositive(m.weight.data)
             # torch.nn.init.uniform_(m.weight, -0.05/4, 0.05/4),
