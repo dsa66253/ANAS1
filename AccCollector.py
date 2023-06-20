@@ -76,10 +76,13 @@ class AccCollector():
             self.fig, self.axs = plt.subplots(1, 1, figsize=(10, 8), sharex=True, constrained_layout=True)
         # ax = fig.add_axes([0, 0, 1, 1])
         # print(baseDir, "a", a)
-        self.axs.boxplot(a, labels=ANASList,  showmeans=False,  boxprops=dict(color=color), meanprops=dict(color=color))
+        xLabels = []
+        for expName in ANASList:
+            xLabels.append(expName.split("_")[1])
+        self.axs.boxplot(a, labels=xLabels,  showmeans=False,  boxprops=dict(color=color), meanprops=dict(color=color))
         self.axs.yaxis.grid()
         self.axs.xaxis.grid()
-        self.axs.set_title(self.title)
+        self.axs.set_title("dataset1")
         # self.axs.set_ylim([self.ymin, self.ymax])
         # self.axs.set_yticks(np.arange(self.ymin, self.ymax, 1))
         plt.xticks(rotation=90)
@@ -227,11 +230,35 @@ def getLoss():
         accC.calDiffValTest("test", expName=exp)
 if __name__=="__main__":
     np.set_printoptions(precision=2)
-    accC = AccCollector("0404", fileNameTag="_0330_5")
+    accC = AccCollector("0329_1", fileNameTag="_0330_4")
     testOrVal = "test"
     # ANASList = ["0324_21", "0324_22", "0324_23","0324_11", "0324_12", "0324_13", "0324_14", "0324_15", "0324_16", "0324_17,", "0324_18", "0324_19", "0324_20"]
     ANASList = [
-    "0404"
+    "0329_1",
+    "0329_2",
+    "0329_3",
+    "0329_4",
+    "0329_5",
+    "0329_6",
+    "0329_7",
+    "0329_8",
+    "0329_9",
+    "0329_10",
+    "0329_11",
+    "0329_12",
+    "0329_13",
+    "0329_14",
+    "0329_15",
+    "0329_16",
+    "0329_17",
+    "0329_18",
+    "0329_19",
+    "0329_20",
+    "0329_21",
+    "0329_22",
+    "0329_23",
+    "0329_24",
+    # "0329_25",
     ]
     accC.addANASExp(ANASList, color="red", dataset=testOrVal, title="_".join(ANASList))
     # ANASList = ["0108", "0109"]
