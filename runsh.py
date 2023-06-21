@@ -51,6 +51,13 @@ def brutNas():
             0,
             0
         ],
+        "layer_3_4": [
+            1,
+            0,
+            0,
+            0,
+            0
+        ],
         "layer_4_5": [
             1,
             0,
@@ -58,58 +65,37 @@ def brutNas():
             0,
             0
         ],
-        # "layer_3_4": [
-        #     1,
-        #     0,
-        #     0,
-        #     0,
-        #     0
-        # ],
-        # "layer_4_5": [
-        #     1,
-        #     0,
-        #     0,
-        #     0,
-        #     0
-        # ],
-        # "layer_3_5": [
-        #     1,
-        #     0,
-        #     0,
-        #     0,
-        #     0
-        # ],
     }
 
     expNameList = [
-    "0327_1",
-    "0327_2",
-    "0327_3",
-    "0327_4",
-    "0327_5",
-    "0327_6",
-    "0327_7",
-    "0327_8",
-    "0327_9",
-    "0327_10",
-    "0327_11",
-    "0327_12",
-    "0327_13",
-    "0327_14",
-    "0327_15",
-    "0327_16",
-    "0327_17",
-    "0327_18",
-    "0327_19",
-    "0327_20",
-    "0327_21",
-    "0327_22",
-    "0327_23",
-    "0327_24",
-    
+    "0329_1",
+    "0329_2",
+    "0329_3",
+    "0329_4",
+    "0329_5",
+    "0329_6",
+    "0329_7",
+    "0329_8",
+    "0329_9",
+    "0329_10",
+    "0329_11",
+    "0329_12",
+    "0329_13",
+    "0329_14",
+    "0329_15",
+    "0329_16",
+    "0329_17",
+    "0329_18",
+    "0329_19",
+    "0329_20",
+    "0329_21",
+    "0329_22",
+    "0329_23",
+    "0329_24",
+    "0329_25",
     ]
     # for curExpName in expNameList:
-    curExpName = "0405_11"
+    curExpName = "0620"
     desDir = join("./log", curExpName)
     makeDir(desDir)
     makeAllDir()
@@ -118,15 +104,15 @@ def brutNas():
     print(json.dumps({curExpName:str(1)}, indent=4))
     setStdoutToDefault(f)
         
-    # for kth in range(cfg["numOfKth"]):
-    #     f = setStdoutToFile("./curExperiment.json")
-    #     print(json.dumps({curExpName:str(kth)}, indent=4))
-    #     setStdoutToDefault(f)
-    #     manualAssign = copy.deepcopy(initiManualAssign)
-    #     filePath = "./decode/{}th_decode.json".format(kth)
-    #     f = setStdoutToFile(filePath)
-    #     print(json.dumps(manualAssign, indent=4)) #* make ndarray to list
-    #     setStdoutToDefault(f)   
+    for kth in range(cfg["numOfKth"]):
+        f = setStdoutToFile("./curExperiment.json")
+        print(json.dumps({curExpName:str(kth)}, indent=4))
+        setStdoutToDefault(f)
+        manualAssign = copy.deepcopy(initiManualAssign)
+        filePath = "./decode/{}th_decode.json".format(kth)
+        f = setStdoutToFile(filePath)
+        print(json.dumps(manualAssign, indent=4)) #* make ndarray to list
+        setStdoutToDefault(f)   
         # exit()
 
             
