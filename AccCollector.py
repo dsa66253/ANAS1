@@ -52,6 +52,7 @@ class AccCollector():
         for expName in ANASList:
             baseDir = expName
             self.title = self.title +"."+ title + color
+            self.title = ""
             # xlabels = []
             expAcc = baseDir
             # xlabels.append(expAcc)
@@ -76,25 +77,24 @@ class AccCollector():
             self.fig, self.axs = plt.subplots(1, 1, figsize=(10, 8), sharex=True, constrained_layout=True)
         # ax = fig.add_axes([0, 0, 1, 1])
         # print(baseDir, "a", a)
-        
-        xLabels = []
-        for expName in ANASList:
-            xLabels.append(expName.split("_")[1])
-        self.axs.boxplot(a, labels=xLabels,  showmeans=False,  boxprops=dict(color=color), meanprops=dict(color=color))
+        labels = ["Exp1", "Exp2", "Exp3", "Exp4"]
+        self.axs.boxplot(a, labels=labels,  showmeans=False,  boxprops=dict(color=color), meanprops=dict(color=color))
         self.axs.yaxis.grid()
         self.axs.xaxis.grid()
-        self.axs.set_title("dataset2")
+        self.axs.set_ylabel("accuracy %")
+        self.axs.set_title(self.title)
         # self.axs.set_ylim([self.ymin, self.ymax])
         # self.axs.set_yticks(np.arange(self.ymin, self.ymax, 1))
         plt.xticks(rotation=90)
     def __getAccByMaxValANAS(self, k, baseDir, expName):
-        if expName in ["0322_3"]:
+        if expName in ["0322_4"]:
             valAcc = np.load( "./log/{}/accLoss/Nas_val_acc_{}.npy".format(baseDir, str(k))  )
             testAcc = np.load( "./log/{}/accLoss/Nas_test_acc_{}.npy".format(baseDir, str(k))  )
         else:
             valAcc = np.load( "./log/{}/accLoss/retrain_val_acc_{}.npy".format(baseDir, str(k)) )
             testAcc = np.load("./log/{}/accLoss/retrain_test_acc_{}.npy".format(baseDir, str(k)) )
         valIndex = np.argmax(valAcc)
+        print(baseDir, testAcc.shape)
         return round(testAcc[valIndex], 2)
     def savePlt(self, dataset):
         saveName = os.path.join("./log", self.baseDir, "box_"+dataset+self.fileNameTag+".png")
@@ -231,34 +231,9 @@ def getLoss():
         accC.calDiffValTest("test", expName=exp)
 if __name__=="__main__":
     np.set_printoptions(precision=2)
-    accC = AccCollector("0328_1", fileNameTag="_0406_2")
+    accC = AccCollector("0620", fileNameTag="_0621_1")
     testOrVal = "test"
-    ANASList = [
-    "0328_1",
-    "0328_2",
-    "0328_3",
-    "0328_4",
-    "0328_5",
-    "0328_6",
-    "0328_7",
-    "0328_8",
-    "0328_9",
-    "0328_10",
-    "0328_11",
-    "0328_12",
-    "0328_13",
-    "0328_14",
-    "0328_15",
-    "0328_16",
-    "0328_17",
-    "0328_18",
-    "0328_19",
-    "0328_20",
-    "0328_21",
-    "0328_22",
-    "0328_23",
-    "0328_24",
-    ]
+    ANASList = ["0620", "0620_2", "0620_2", "0620_2"]
     accC.addANASExp(ANASList, color="red", dataset=testOrVal, title="_".join(ANASList))
     # ANASList = ["0108", "0109"]
     # accC.addANASExp("0102", color="green", dataset=testOrVal, title="_".join(ANASList))
