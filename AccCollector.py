@@ -76,10 +76,14 @@ class AccCollector():
             self.fig, self.axs = plt.subplots(1, 1, figsize=(10, 8), sharex=True, constrained_layout=True)
         # ax = fig.add_axes([0, 0, 1, 1])
         # print(baseDir, "a", a)
-        self.axs.boxplot(a, labels=ANASList,  showmeans=False,  boxprops=dict(color=color), meanprops=dict(color=color))
+        
+        xLabels = []
+        for expName in ANASList:
+            xLabels.append(expName.split("_")[1])
+        self.axs.boxplot(a, labels=xLabels,  showmeans=False,  boxprops=dict(color=color), meanprops=dict(color=color))
         self.axs.yaxis.grid()
         self.axs.xaxis.grid()
-        self.axs.set_title(self.title)
+        self.axs.set_title("dataset2")
         # self.axs.set_ylim([self.ymin, self.ymax])
         # self.axs.set_yticks(np.arange(self.ymin, self.ymax, 1))
         plt.xticks(rotation=90)
@@ -227,17 +231,40 @@ def getLoss():
         accC.calDiffValTest("test", expName=exp)
 if __name__=="__main__":
     np.set_printoptions(precision=2)
-    accC = AccCollector("0405_3", fileNameTag="_0406_6")
+    accC = AccCollector("0328_1", fileNameTag="_0406_2")
     testOrVal = "test"
     ANASList = [
-    "0403_2",
+    "0328_1",
+    "0328_2",
+    "0328_3",
+    "0328_4",
+    "0328_5",
+    "0328_6",
+    "0328_7",
+    "0328_8",
+    "0328_9",
+    "0328_10",
+    "0328_11",
+    "0328_12",
+    "0328_13",
+    "0328_14",
+    "0328_15",
+    "0328_16",
+    "0328_17",
+    "0328_18",
+    "0328_19",
+    "0328_20",
+    "0328_21",
+    "0328_22",
+    "0328_23",
+    "0328_24",
     ]
     accC.addANASExp(ANASList, color="red", dataset=testOrVal, title="_".join(ANASList))
     # ANASList = ["0108", "0109"]
     # accC.addANASExp("0102", color="green", dataset=testOrVal, title="_".join(ANASList))
     # accC.addExp("1223.brutL0L1", color="blue", dataset=testOrVal, title="1223.brutL0L1")
     # accC.addExp("1111_brutL0L1", color="black", dataset=testOrVal, title="1111_brutL0L1")
-    # accC.savePlt(dataset=testOrVal)
+    accC.savePlt(dataset=testOrVal)
     # getLoss()
     # accC.addExp("1027_brutL3L4", color="red", dataset="test", title="1027_brutL3L4")
     # accC.addExp("1029_2brutL3L4", color="green", dataset="test", title="1029_2brutL3L4")
