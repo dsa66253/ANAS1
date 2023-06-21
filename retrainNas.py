@@ -79,7 +79,7 @@ def prepareModel(kth):
     archDict = json.load(f)
         
     #info prepare model
-    print("Preparing model...")
+    print("Preparing model...", archDict)
     set_seed_cpu(seed_weight)
     net = NewNasModel(cellArch=archDict)
     net.train()

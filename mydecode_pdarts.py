@@ -93,7 +93,7 @@ def decodeOperation(allAlphas):
     for i in range(takeNumOfOp):
         res[sortAlphaIndex[i]] = 1
     # return [1,0,0,0,0]
-    # return res.tolist() #* make ndarray to list
+    return res.tolist() #* make ndarray to list
 def decodeAllOperation(kth, pickedLayerList=None):
     fileNameList = []
     decodeDict = {}
