@@ -1,5 +1,5 @@
 # config.py
-datasetRoot = "../dataset2"
+datasetRoot = "../dataset"
 trainDataSetFolder = datasetRoot+"/train"
 testDataSetFolder = datasetRoot+"/test"
 PRIMITIVES = [
@@ -98,7 +98,7 @@ cfg_nasmodel = {
     'loc_weight': 1.0,
     'gpu_train': True,
     'batch_size': 64,
-    'start_train_nas_epoch': 4,
+    'start_train_nas_epoch': 0,
     'ngpu': 1,
     'epoch': 45,
     'decay1': 70,

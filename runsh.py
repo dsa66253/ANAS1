@@ -51,14 +51,21 @@ def brutNas():
             0,
             0
         ],
-        "layer_3_4": [
+        "layer_2_3": [
             1,
             0,
             0,
             0,
             0
         ],
-        "layer_4_5": [
+        # "layer_3_4": [
+        #     1,
+        #     0,
+        #     0,
+        #     0,
+        #     0
+        # ],
+        "layer_3_5": [
             1,
             0,
             0,
@@ -66,6 +73,7 @@ def brutNas():
             0
         ],
     }
+
 
     expNameList = [
     "0329_1",
@@ -105,9 +113,6 @@ def brutNas():
     setStdoutToDefault(f)
         
     for kth in range(cfg["numOfKth"]):
-        f = setStdoutToFile("./curExperiment.json")
-        print(json.dumps({curExpName:str(kth)}, indent=4))
-        setStdoutToDefault(f)
         manualAssign = copy.deepcopy(initiManualAssign)
         filePath = "./decode/{}th_decode.json".format(kth)
         f = setStdoutToFile(filePath)
