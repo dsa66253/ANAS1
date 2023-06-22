@@ -1,5 +1,5 @@
 # config.py
-datasetRoot = "../dataset"
+datasetRoot = "../dataset3"
 trainDataSetFolder = datasetRoot+"/train"
 testDataSetFolder = datasetRoot+"/test"
 PRIMITIVES = [
@@ -53,26 +53,26 @@ featureMapDim = [
     256,
 ]
 seed = {
-    # "0": 10,
-    # "1": 255,
-    # "2": 830,
-    # "3": 1830,
-    # "4": 2830,
-    # "5": 3830,
-    # "6": 4830,
-    # "7": 5830,
-    # "8": 6830,
-    # "9": 7830,
-    "0": 110,
-    "1": 1255,
-    "2": 1830,
-    "3": 11830,
-    "4": 12830,
-    "5": 13830,
-    "6": 14830,
-    "7": 15830,
-    "8": 11830,
-    "9": 17830
+    "0": 10,
+    "1": 255,
+    "2": 830,
+    "3": 1830,
+    "4": 2830,
+    "5": 3830,
+    "6": 4830,
+    "7": 5830,
+    "8": 6830,
+    "9": 7830,
+    # "0": 110,
+    # "1": 1255,
+    # "2": 1830,
+    # "3": 11830,
+    # "4": 12830,
+    # "5": 13830,
+    # "6": 14830,
+    # "7": 15830,
+    # "8": 11830,
+    # "9": 17830
 }
 cfg_alexnet = {
     'name': 'alexnet',
@@ -107,7 +107,7 @@ cfg_nasmodel = {
     'pretrain': False,
     'in_channel': 8,
     'out_channel': 64,
-    "numOfClasses": 20,
+    "numOfClasses": 10,
     "numOfLayers": len(trainMatrix),
     "numOfInnerCell": len(trainMatrix[0]),
     "numOfOperations": len(PRIMITIVES),
@@ -130,7 +130,7 @@ cfg_newnasmodel = {
     'pretrain': False,
     'in_channel': 8,
     'out_channel': 64,
-    "numOfClasses": 20,
+    "numOfClasses": 10,
     "numOfLayers": len(trainMatrix),
     "numOfInnerCell": len(trainMatrix[0]),
     "numOfOperations": len(PRIMITIVES),
