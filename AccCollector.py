@@ -4,6 +4,7 @@ import csv
 import os
 import matplotlib.pyplot as plt
 from utility.HistDrawer import HistDrawer
+from data.config import cfg_nasmodel as cfg
 class AccCollector():
     def __init__(self, baseDir = "1027_brutL3L4", fileNameTag=""):
         self.fileNameTag = fileNameTag
@@ -230,9 +231,9 @@ def getLoss():
         accC.calDiffValTest("test", expName=exp)
 if __name__=="__main__":
     np.set_printoptions(precision=2)
-    accC = AccCollector("0620", fileNameTag="_0621_1")
+    accC = AccCollector("0622", fileNameTag="_0629_1")
     testOrVal = "test"
-    ANASList = ["0620", "0620_2", "0620_2", "0620_2"]
+    ANASList = ["0622", "0622_2", "0622", "0622"]
     accC.addANASExp(ANASList, color="red", dataset=testOrVal, title="_".join(ANASList))
     # ANASList = ["0108", "0109"]
     # accC.addANASExp("0102", color="green", dataset=testOrVal, title="_".join(ANASList))
