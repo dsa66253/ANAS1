@@ -231,9 +231,9 @@ def getLoss():
         accC.calDiffValTest("test", expName=exp)
 if __name__=="__main__":
     np.set_printoptions(precision=2)
-    accC = AccCollector("0622", fileNameTag="_0629_1")
+    accC = AccCollector("0622_3", fileNameTag="_0629_4")
     testOrVal = "test"
-    ANASList = ["0622", "0622_2", "0622", "0622"]
+    ANASList = ["0622_3", "0622_3", "0620_3", "0622_7"]
     accC.addANASExp(ANASList, color="red", dataset=testOrVal, title="_".join(ANASList))
     # ANASList = ["0108", "0109"]
     # accC.addANASExp("0102", color="green", dataset=testOrVal, title="_".join(ANASList))
