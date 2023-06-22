@@ -94,7 +94,7 @@ class AccCollector():
             valAcc = np.load( "./log/{}/accLoss/retrain_val_acc_{}.npy".format(baseDir, str(k)) )
             testAcc = np.load("./log/{}/accLoss/retrain_test_acc_{}.npy".format(baseDir, str(k)) )
         valIndex = np.argmax(valAcc)
-        print(baseDir, testAcc.shape)
+        # print(baseDir, testAcc.shape)
         return round(testAcc[valIndex], 2)
     def savePlt(self, dataset):
         saveName = os.path.join("./log", self.baseDir, "box_"+dataset+self.fileNameTag+".png")
@@ -231,9 +231,9 @@ def getLoss():
         accC.calDiffValTest("test", expName=exp)
 if __name__=="__main__":
     np.set_printoptions(precision=2)
-    accC = AccCollector("0622", fileNameTag="_0629_1")
+    accC = AccCollector("0622_6", fileNameTag="tmp")
     testOrVal = "test"
-    ANASList = ["0622", "0622_2", "0622", "0622"]
+    ANASList = ["0622_6", "0622_6", "0622_6", "0622_6"]
     accC.addANASExp(ANASList, color="red", dataset=testOrVal, title="_".join(ANASList))
     # ANASList = ["0108", "0109"]
     # accC.addANASExp("0102", color="green", dataset=testOrVal, title="_".join(ANASList))
