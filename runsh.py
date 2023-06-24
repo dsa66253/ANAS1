@@ -37,28 +37,35 @@ def doExpBasedExperiments():
         print("finish trina.sh")
 def brutNas():
     initiManualAssign = {
-        "layer_0_3": [
+        "layer_0_1": [
+            0,
+            0,
+            0,
+            0,
+            1
+        ],
+        "layer_1_2": [
+            0,
+            1,
+            0,
+            0,
+            0
+        ],
+        "layer_2_3": [
             1,
             0,
             0,
             0,
             0
         ],
-        # "layer_1_2": [
-        #     1,
-        #     0,
-        #     0,
-        #     0,
-        #     0
-        # ],
-        # "layer_2_4": [
-        #     1,
-        #     0,
-        #     0,
-        #     0,
-        #     0
-        # ],
-        "layer_3_5": [
+        "layer_3_4": [
+            1,
+            0,
+            0,
+            0,
+            0
+        ],
+        "layer_4_5": [
             1,
             0,
             0,
@@ -96,7 +103,7 @@ def brutNas():
     "0329_25",
     ]
     # for curExpName in expNameList:
-    curExpName = "0623_13"
+    curExpName = "0624_4"
     desDir = join("./log", curExpName)
     makeDir(desDir)
     makeAllDir()
