@@ -51,7 +51,7 @@ def brutNas():
         #     0,
         #     0
         # ],
-        "layer_2_3": [
+        "layer_2_4": [
             1,
             0,
             0,
@@ -65,7 +65,7 @@ def brutNas():
         #     0,
         #     0
         # ],
-        "layer_3_5": [
+        "layer_4_5": [
             1,
             0,
             0,
@@ -103,7 +103,7 @@ def brutNas():
     "0329_25",
     ]
     # for curExpName in expNameList:
-    curExpName = "0625_3"
+    curExpName = "0625_8"
     desDir = join("./log", curExpName)
     makeDir(desDir)
     makeAllDir()
