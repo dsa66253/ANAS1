@@ -12,7 +12,7 @@ class AccCollector():
         self.saveFolder="./tmp"
         self.title = ""
         self.ymax = 85
-        self.ymin = 65
+        self.ymin = 30
     def addExp(self, baseDir, color="red", dataset="val", title=""):
         self.title = self.title +"."+ title + color
         a = []
@@ -64,7 +64,7 @@ class AccCollector():
                 loadPath = "./log/{}/accLoss/retrain_{}_acc_{}.npy".format(baseDir, dataset, str(k)) 
                 # print(loadPath)
                 # print(np.load(loadPath))
-                # acc = round(np.load(loadPath)[-1], 2)
+                acc = round(np.load(loadPath)[-1], 2) 
                 #* get test acc by correspoding max val acc
                 acc = self.__getAccByMaxValANAS(k, baseDir, expName)
                 data.append(acc)
@@ -231,15 +231,15 @@ def getLoss():
         accC.calDiffValTest("test", expName=exp)
 if __name__=="__main__":
     np.set_printoptions(precision=2)
-    accC = AccCollector("0626", fileNameTag="tmp")
+    accC = AccCollector("0626", fileNameTag="_0629_3")
     testOrVal = "test"
-    ANASList = ["0626", "0626", "0626", "0626"]
+    ANASList = ["0626_5", "0626", "0626_2", "0626_3"]
     accC.addANASExp(ANASList, color="red", dataset=testOrVal, title="_".join(ANASList))
     # ANASList = ["0108", "0109"]
     # accC.addANASExp("0102", color="green", dataset=testOrVal, title="_".join(ANASList))
     # accC.addExp("1223.brutL0L1", color="blue", dataset=testOrVal, title="1223.brutL0L1")
     # accC.addExp("1111_brutL0L1", color="black", dataset=testOrVal, title="1111_brutL0L1")
-    # accC.savePlt(dataset=testOrVal)
+    accC.savePlt(dataset=testOrVal)
     # getLoss()
     # accC.addExp("1027_brutL3L4", color="red", dataset="test", title="1027_brutL3L4")
     # accC.addExp("1029_2brutL3L4", color="green", dataset="test", title="1029_2brutL3L4")
