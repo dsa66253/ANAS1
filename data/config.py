@@ -1,5 +1,5 @@
 # config.py
-datasetRoot = "../dataset123"
+datasetRoot = "../dataset3"
 trainDataSetFolder = datasetRoot+"/train"
 testDataSetFolder = datasetRoot+"/test"
 PRIMITIVES = [
@@ -98,7 +98,7 @@ cfg_nasmodel = {
     'loc_weight': 1.0,
     'gpu_train': True,
     'batch_size': 64,
-    'start_train_nas_epoch': 0,
+    'start_train_nas_epoch': 4,
     'ngpu': 1,
     'epoch': 45,
     'decay1': 70,
@@ -107,7 +107,7 @@ cfg_nasmodel = {
     'pretrain': False,
     'in_channel': 8,
     'out_channel': 64,
-    "numOfClasses": 30,
+    "numOfClasses": 10,
     "numOfLayers": len(trainMatrix),
     "numOfInnerCell": len(trainMatrix[0]),
     "numOfOperations": len(PRIMITIVES),
@@ -130,7 +130,7 @@ cfg_newnasmodel = {
     'pretrain': False,
     'in_channel': 8,
     'out_channel': 64,
-    "numOfClasses": 30,
+    "numOfClasses": 10,
     "numOfLayers": len(trainMatrix),
     "numOfInnerCell": len(trainMatrix[0]),
     "numOfOperations": len(PRIMITIVES),
