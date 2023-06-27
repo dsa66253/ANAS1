@@ -38,27 +38,27 @@ def doExpBasedExperiments():
 def brutNas():
     initiManualAssign = {
         "layer_0_1": [
+            1,
             0,
             0,
             0,
-            0,
-            1
+            0
         ],
         "layer_1_2": [
-            0,
-            1,
-            0,
-            0,
-            0
-        ],
-        "layer_2_3": [
             1,
             0,
             0,
             0,
             0
         ],
-        "layer_3_4": [
+        # "layer_2_3": [
+        #     1,
+        #     0,
+        #     0,
+        #     0,
+        #     0
+        # ],
+        "layer_2_4": [
             1,
             0,
             0,
@@ -103,7 +103,7 @@ def brutNas():
     "0329_25",
     ]
     # for curExpName in expNameList:
-    curExpName = "0626_9"
+    curExpName = "0626_11"
     desDir = join("./log", curExpName)
     makeDir(desDir)
     makeAllDir()
