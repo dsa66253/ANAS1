@@ -267,7 +267,7 @@ if __name__=="__main__":
     # accC.addANASExp("0102", color="green", dataset=testOrVal, title="_".join(ANASList))
     # accC.addExp("1223.brutL0L1", color="blue", dataset=testOrVal, title="1223.brutL0L1")
     # accC.addExp("1111_brutL0L1", color="black", dataset=testOrVal, title="1111_brutL0L1")
-    accC.savePlt(dataset=testOrVal)
+    # accC.savePlt(dataset=testOrVal)
     # getLoss()
     # accC.addExp("1027_brutL3L4", color="red", dataset="test", title="1027_brutL3L4")
     # accC.addExp("1029_2brutL3L4", color="green", dataset="test", title="1029_2brutL3L4")
