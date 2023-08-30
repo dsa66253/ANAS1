@@ -12,7 +12,7 @@ class AccCollector():
         self.saveFolder="./tmp"
         self.title = ""
         self.ymax = 85
-        self.ymin = 65
+        self.ymin = 30
     def addExp(self, baseDir, color="red", dataset="val", title=""):
         self.title = self.title +"."+ title + color
         a = []
@@ -30,7 +30,7 @@ class AccCollector():
                     # print(np.load(loadPath))
                     acc = round(np.load(loadPath)[-1], 2)
                     #* get test acc by correspoding max val acc
-                    # acc = self.__getAccByMaxVal(i, j, k, baseDir)
+                    acc = self.__getAccByMaxVal(i, j, k, baseDir)
                     data.append(acc)
                     # self.a.append([expAcc, k , acc])
                 a.append(data)
@@ -64,7 +64,7 @@ class AccCollector():
                 loadPath = "./log/{}/accLoss/retrain_{}_acc_{}.npy".format(baseDir, dataset, str(k)) 
                 # print(loadPath)
                 # print(np.load(loadPath))
-                acc = round(np.load(loadPath)[-1], 2)
+                acc = round(np.load(loadPath)[-1], 2) 
                 #* get test acc by correspoding max val acc
                 acc = self.__getAccByMaxValANAS(k, baseDir, expName)
                 data.append(acc)
@@ -77,11 +77,16 @@ class AccCollector():
             self.fig, self.axs = plt.subplots(1, 1, figsize=(10, 8), sharex=True, constrained_layout=True)
         # ax = fig.add_axes([0, 0, 1, 1])
         # print(baseDir, "a", a)
-        labels = ["Exp1", "Exp2", "Exp3", "Exp4"]
+        labels = []
+        for i in range(len(ANASList)):
+            labels.append("Exp"+str(i+1))
+        print(labels)
         self.axs.boxplot(a, labels=labels,  showmeans=False,  boxprops=dict(color=color), meanprops=dict(color=color))
         self.axs.yaxis.grid()
         self.axs.xaxis.grid()
-        self.axs.set_ylabel("accuracy %")
+        self.axs.set_ylabel("accuracy %", fontsize=22)
+        self.axs.set_xlabel("", fontsize=22)
+        self.axs.tick_params(axis='both', labelsize=18)
         self.axs.set_title(self.title)
         # self.axs.set_ylim([self.ymin, self.ymax])
         # self.axs.set_yticks(np.arange(self.ymin, self.ymax, 1))
@@ -154,11 +159,11 @@ class AccCollector():
                     testIndex = np.argmax(testAcc)
                     valAcc = np.load("./log/{}/{}.{}_{}/accLoss/retrain_val_acc_{}.npy".format(self.baseDir, self.baseDir, str(i), str(j), str(k)) )
                     valIndex = np.argmax(valAcc)
-                    firstNegMaIndex = self.getFirstNegMaIndex(valAcc, startEpoch=20)
+                    # firstNegMaIndex = self.getFirstNegMaIndex(valAcc, startEpoch=20)
                     # print(firstNegMaIndex)
                     # print(valAcc[:firstNegMaIndex])
                     # print(testAcc[:firstNegMaIndex])
-                    valIndex = np.argmax(valAcc[:firstNegMaIndex])
+                    # valIndex = np.argmax(valAcc[:firstNegMaIndex])
                     
                     # if testIndex<20:
                     #     print(expName, i, j, k)
@@ -172,6 +177,25 @@ class AccCollector():
         histDrawer.drawHist(torch.tensor(toHistList, dtype=torch.float32), fileName="maxTestAcc", tag=expName)
         print(hit, total, "hit rate", hit/total)
         print("Avg loss ", loss/total)
+    def getDiffValTestPerExp(self, dataset, expName):
+        # return hit rate and loss of the expName
+        total = 0
+        hit = 0
+        loss = 0
+        toHistList = []
+        for k in range(10):
+            testAcc = np.load("./log/{}/{}.{}_{}/accLoss/retrain_test_acc_{}.npy".format(self.baseDir, self.baseDir, str(i), str(j), str(k)) )
+            testIndex = np.argmax(testAcc)
+            valAcc = np.load("./log/{}/{}.{}_{}/accLoss/retrain_val_acc_{}.npy".format(self.baseDir, self.baseDir, str(i), str(j), str(k)) )
+            valIndex = np.argmax(valAcc)
+            
+            toHistList.append(testIndex)
+            total = total + 1
+            if testIndex==valIndex:
+                hit = hit + 1
+            else:
+                loss = loss + (abs(testAcc[testIndex] - testAcc[valIndex]))
+        return hit/total, loss/total
     def getFirstNegMaIndex(self, ma, startEpoch=10):
         stopEpoch = 10
         derivativeMa = [0] #have no previous acc at first epoch
@@ -231,10 +255,14 @@ def getLoss():
         accC.calDiffValTest("test", expName=exp)
 if __name__=="__main__":
     np.set_printoptions(precision=2)
-    accC = AccCollector("0622", fileNameTag="_0629_6MaxVal")
+    # ANASList = ["0626_5", "0626", "0626_2", "0626_3"]
+    ANASList = []
+    for i in range(1, 25):
+        ANASList.append("0328_"+str(i))
+    accC = AccCollector(ANASList[0], fileNameTag="_0803_9")
     testOrVal = "test"
-    ANASList = ["0622_4", "0622", "0622_2", "0622_4"]
-    accC.addANASExp(ANASList, color="red", dataset=testOrVal, title="_".join(ANASList))
+
+    accC.addANASExp(ANASList, color="black", dataset=testOrVal, title="_".join(ANASList))
     # ANASList = ["0108", "0109"]
     # accC.addANASExp("0102", color="green", dataset=testOrVal, title="_".join(ANASList))
     # accC.addExp("1223.brutL0L1", color="blue", dataset=testOrVal, title="1223.brutL0L1")

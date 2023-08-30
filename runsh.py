@@ -37,14 +37,14 @@ def doExpBasedExperiments():
         print("finish trina.sh")
 def brutNas():
     initiManualAssign = {
-        "layer_0_1": [
+        "layer_0_2": [
             1,
             0,
             0,
             0,
             0
         ],
-        "layer_1_2": [
+        "layer_2_3": [
             1,
             0,
             0,
@@ -58,14 +58,14 @@ def brutNas():
         #     0,
         #     0
         # ],
-        "layer_2_4": [
-            1,
-            0,
-            0,
-            0,
-            0
-        ],
-        "layer_4_5": [
+        # "layer_2_4": [
+        #     1,
+        #     0,
+        #     0,
+        #     0,
+        #     0
+        # ],
+        "layer_3_5": [
             1,
             0,
             0,
